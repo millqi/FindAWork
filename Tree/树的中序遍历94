@@ -1,0 +1,79 @@
+public class Solution {
+    //遍历与递归 Time O(n) Space O(n)
+    List<Integer> res=new ArrayList<>();
+    public List<Integer> inorderTraversal(TreeNode root) {
+        recursion(root);
+        return  res;
+    }
+    public void recursion(TreeNode root) {
+        if(root==null) return;
+        recursion(root.left);
+        res.add(root.val);
+        recursion(root.right);
+    }
+    public List<Integer> inorderTraversal2(TreeNode root) {
+        Stack<TreeNode> stack=new Stack<>();
+        if(root==null) return res;
+        TreeNode cur=root;
+        while(cur!=null||!stack.isEmpty())
+        {
+            while(cur!=null)
+            {
+                stack.add(cur);
+                cur=cur.left;
+            }
+            cur=stack.pop();
+            res.add(cur.val);
+            cur=cur.right;
+        }
+        return  res;
+    }
+    //只插入根节点
+    public List<Integer> inorderTraversal3(TreeNode root) {
+        if(root==null)return res;
+        Stack<TreeNode> stack = new Stack<>();
+        TreeNode curr = root;
+
+        while(curr!=null || !stack.isEmpty()){
+            if(curr!=null){
+                stack.push(curr);
+                curr = curr.left;
+            }else{
+                curr = stack.pop();
+                res.add(curr.val);
+                curr = curr.right;
+            }
+        }
+        return res;
+    }
+    //Time O(n) Space O(1) 如果算上结果储存数组O(n)
+    public List<Integer> morrisTransversal(TreeNode root) {
+        TreeNode cur=root;
+        while(cur!=null)
+        {
+            if(cur.left==null)
+            {
+                res.add(cur.val);
+                cur=cur.right;
+            }
+            else{
+                TreeNode pre=cur.left;
+                while(pre.right!=null&&pre.right!=cur)
+                {
+                    pre=pre.right;
+                }
+                if(pre.right==null)
+                {
+                    pre.right=cur;
+                    cur=cur.left;
+                }
+                else {
+                    pre.right=null;
+                    res.add(cur.val);
+                    cur=cur.right;
+                }
+            }
+        }
+        return res;
+    }
+}
