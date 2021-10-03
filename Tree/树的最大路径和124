@@ -1,0 +1,17 @@
+public class Solution {
+    //Time O(N) 需要访问每一个节点 Space O(N) H为树的高度 平均情况logN（两边平衡） 最差情况O(N) 单边树 链表
+    int max;
+    public int maxPathSum2(TreeNode root) {
+        max=Integer.MIN_VALUE;
+        dfs(root);
+        return max;
+    }
+    public int dfs(TreeNode root)
+    {
+        if(root==null) return 0;
+        int left=Math.max(0,dfs(root.left));
+        int right=Math.max(0,dfs(root.right));
+        max=Math.max(left+right+root.val,max);
+        return Math.max(left,right)+root.val;
+    }
+}
