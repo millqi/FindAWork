@@ -1,0 +1,43 @@
+public class Solution {
+    //遍历
+    public int kthSmallest(TreeNode root, int k) {
+        Stack<TreeNode> stack=new Stack<>();
+        while(root!=null)
+        {
+            stack.push(root);
+            root=root.left;
+        }
+        while(k!=0)
+        {
+            TreeNode node=stack.pop();
+            --k;
+            if(k==0)
+                return node.val;
+            TreeNode right=node.right;
+            while(right!=null){
+                stack.push(right);
+                right=right.left;
+            }
+        }
+        return -1;//Not Found
+
+    }
+    int count=0;
+    int res=0;
+    public int kthSmallest2(TreeNode root, int k) {
+        count=k;
+        inorder(root);
+        return res;
+    }
+
+    private void inorder(TreeNode root) {
+        if(root==null) return;
+        inorder(root.left);
+        --count;
+        if(count==0) {
+            res = root.val;
+            return;
+        }
+        inorder(root.right);
+    }
+}
