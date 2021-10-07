@@ -1,0 +1,101 @@
+import java.util.*;
+
+public class Solution {
+    //Time O(n*m) n:s.length m:words.length|| Space O(m)
+    //该种解法需要每次清空hashmap导致需要m次循环计算出每次的临时记忆hashmap
+    public List<Integer> findSubstring(String s, String[] words) {
+        Map<String ,Integer> map=new HashMap<>();
+        ArrayList<Integer> res=new ArrayList<>();
+        for(int i=0;i< words.length;++i)
+        {
+            map.put(words[i],map.getOrDefault(words[i],0)+1);
+        }
+        int gap=words[0].length();
+        for(int i=0;i<s.length()-gap* words.length+1;++i)
+        {
+            HashMap<String ,Integer> seen=new HashMap<>();
+            int j=0;
+            while(j< words.length)
+            {
+                String word=s.substring(i+j*gap,i+(j+1)*gap);
+                if(map.containsKey(word))
+                {
+                    seen.put(word,seen.getOrDefault(word,0)+1);
+                    if(seen.get(word)>map.get(word))
+                        break;
+                }
+                else break;
+                ++j;
+            }
+            if(j==words.length) {
+                res.add(i);
+            }
+        }
+        return res;
+    }
+    //Time O(n) Space O(m)
+    public List<Integer> findSubstring(String s, String[] words) {
+        List<Integer> res=new ArrayList<>();
+        int wordNum= words.length;//单词个数
+        if(wordNum==0){
+            return res;
+        }
+        int wordLen=words[0].length();
+        HashMap<String ,Integer> allWords=new HashMap<>();
+        for(String w:words)
+        {
+            allWords.put(w,allWords.getOrDefault(w,0)+1);
+        }
+        for(int j=0;j<wordLen;++j)
+        {
+            HashMap<String ,Integer> seen=new HashMap<>();
+            int num=0;//seen里面有多少个单词
+            for(int i=j;i<s.length()-wordLen*wordNum+1;i+=wordLen)
+            {
+                boolean hasRemoved=false;//防止情况三移除后 情况一继续移除
+                while(num<wordNum)
+                {
+                    String word=s.substring(i+num*wordLen,i+(num+1)*wordLen);
+                    if(allWords.containsKey(word))
+                    {
+                        seen.put(word,seen.getOrDefault(word,0)+1);
+                        //情况三出现 ，合适单词过多
+                        if(seen.get(word)>allWords.get(word))
+                        {
+                            hasRemoved=true;
+                            int removeNum=0;//移除的单词的数目
+                            while(seen.get(word)>allWords.get(word)){
+                                String firstWord=s.substring(i+removeNum*wordLen,i+(removeNum+1)*wordLen);
+                                int v=seen.get(firstWord);
+                                seen.put(firstWord,v-1);
+                                removeNum++;
+                            }
+                            num=num-removeNum+1;//将seen单词数减去被移除的，但是要加上一开始加入的单词
+                            i=i+(removeNum-1)*wordLen;//i往前进移除单词个数，少一个是因为这次循环加了一个
+                            break;
+                        }
+                    }
+                    else {//如果没有这个单词 直接将i放到这个单词的后面
+                        seen.clear();
+                        i=i+num*wordLen;
+                        num=0;
+                        break;
+                    }
+                    num++;//此次循环单词数量加一
+                }
+                if(num==wordNum)
+                {
+                    res.add(i);
+                }
+                //出现字串完全匹配，将之前字串的第一个单词从seen中移除
+                if(num>0&&!hasRemoved)
+                {
+                    String firstWord=s.substring(i,i+wordLen);
+                    seen.put(firstWord,seen.get(firstWord)-1);
+                    num--;
+                }
+            }
+        }
+        return res;
+    }
+}
