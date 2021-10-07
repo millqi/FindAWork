@@ -1,0 +1,22 @@
+public class Solution {
+    //Time O(n) Space O(1)
+    public int maxArea(int[] height) {
+        int max_Water=0;
+        int frt=0,end=height.length-1;
+        while(frt<end)
+        {
+            if(height[end]>height[frt])
+            {
+                max_Water=Math.max(max_Water,(end-frt)*height[frt]);
+                --end;
+            }else {
+                max_Water=Math.max(max_Water,(end-frt)*height[end]);
+                ++frt;
+            }
+
+        }
+        return max_Water;
+    }
+
+
+}
