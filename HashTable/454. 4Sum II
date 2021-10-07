@@ -1,0 +1,53 @@
+public class Solution {
+    //Time O(n^(k/2)) Space O(n^(k/2)) for the hashmap O(kn) for the lists
+    //将数组分半为两部分 第一部分从开头到中间计算sum，放入hashmap 如sum为a，第二部分从中间开始计算sum，在hashmap中寻找 -a，如果有则返回它的次数
+    public int fourSumCount(int[] nums1, int[] nums2, int[] nums3, int[] nums4) {
+        return kSumCount(new int[][]{nums1,nums2,nums3,nums4});
+    }
+    public int kSumCount(int [][] lists)
+    {
+        Map<Integer,Integer> map=new HashMap<>();
+        addToHash(lists,map,0,0);
+        return countFromHalf(lists,map,lists.length/2,0);
+    }
+    public void addToHash(int [][]lists,Map<Integer,Integer> map,int curIndex,int curSum)
+    {
+        if(curIndex== lists.length/2)
+        {
+            map.put(curSum,map.getOrDefault(curSum,0)+1);
+        }
+        else {
+            for(int num:lists[curIndex])
+            {
+                addToHash(lists,map,curIndex+1,curSum+num);
+            }
+        }
+    }
+    public int countFromHalf(int [][]lists,Map<Integer,Integer> map,int curIndex,int curSum)
+    {
+        if(curIndex==lists.length)
+            return map.getOrDefault(curSum,0);
+        int count=0;
+        for(int num:lists[curIndex])
+        {
+            count+=countFromHalf(lists,map,curIndex+1,curSum-num);
+        }
+        return count;
+    }
+    //常规解法
+    public int fourSumCount(int[] A, int[] B, int[] C, int[] D) {
+        int count = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int a : A) {
+            for (int b : B) {
+                map.put(a + b, map.getOrDefault(a + b, 0) + 1);
+            }
+        }
+        for (int c : C) {
+            for (int d : D) {
+                count += map.getOrDefault(-(c + d), 0);
+            }
+        }
+        return count;
+    }
+}
