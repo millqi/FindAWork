@@ -1,0 +1,26 @@
+public class Solution {
+    class Node {
+        public int val;
+        public Node left;
+        public Node right;
+        public Node parent;
+    }
+    //Same Question LeetCode 160
+    //Time O(n) Space O(1)
+    public Node lowestCommonAncestor(Node p, Node q) {
+        Node a=p,b=q;
+        while(a!=b)
+        {
+            //a离公共节点有2步 b离公共节点有1步
+            //公共节点与根节点后面总共一步  a走3步一个轮回 b走2步一个轮回 总共a走两个轮回就会与b同步
+            /*
+            1 - 2
+                    4- 5
+            3
+             */
+            a= a==null?p:a.parent;//
+            b= b==null?q:b.parent;
+        }
+        return a;
+    }
+}
