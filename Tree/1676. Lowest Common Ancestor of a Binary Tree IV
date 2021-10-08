@@ -1,0 +1,48 @@
+class Solution {
+    //Time O(n) n为树的节点数量 Space O(m+h) m为nodes的数量 h为函数栈高度？
+    TreeNode LCA=null;
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode[] nodes) {
+        HashSet<Integer> set=new HashSet<>();
+        for(TreeNode n:nodes)
+        {
+            set.add(n.val);
+        }
+        count(root,set);
+        return LCA;
+    }
+    public int count(TreeNode root,HashSet<Integer> set)
+    {
+        if(root==null) return 0;
+        int left=count(root.left,set);
+        int right=count(root.right,set);
+        int count=left+right;
+        if(set.contains(root.val)){
+            ++count;
+        }
+        if(count==set.size()&&LCA==null) {
+            LCA = root;
+            return count;
+        }
+        return count;
+    }
+    //Time O(n) Space O(h)函数栈最差情况要为树的深度
+    TreeNode visit(TreeNode root, TreeNode[] nodes){
+
+        if(null == root) return null;
+
+        TreeNode ret = null;
+        for(final TreeNode node : nodes){
+            if(root.val == node.val){
+                ret = root;
+                break;
+            }
+        }
+        if(ret != null) return ret;
+        final TreeNode l = visit(root.left, nodes);
+        final TreeNode r = visit(root.right, nodes);
+
+        if(l == null) return r;
+        if(r == null) return l;
+        return root;
+    }
+}
