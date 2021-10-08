@@ -6,7 +6,7 @@ public class Solution {
         public Node parent;
     }
     //Same Question LeetCode 160
-    //Time O(n) Space O(1)
+    //Time O(n) n 为 最低节点的高度 Space O(1)
     public Node lowestCommonAncestor(Node p, Node q) {
         Node a=p,b=q;
         while(a!=b)
