@@ -1,0 +1,21 @@
+class Solution {
+    //Time O(n) Space O(1)
+    public void moveZeroes(int[] nums) {
+        int index=0,cur=0;
+        while(cur<nums.length){
+            if(nums[cur]==0)
+            {
+                ++cur;
+            }
+            else{
+                if(nums[index]==0)
+                {
+                    nums[index]=nums[cur];
+                    nums[cur]=0;
+                }
+                ++index;
+                ++cur;
+            }
+        }
+    }
+}
