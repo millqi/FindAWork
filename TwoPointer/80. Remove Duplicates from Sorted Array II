@@ -1,0 +1,24 @@
+public int removeDuplicates(int[] nums) {
+        //Two Pointer
+        //Time O(n) Space O(1)
+        int n=nums.length;
+        int index=1,cur=1,count=1;
+        while(cur<n)
+        {
+            if(nums[cur]!=nums[cur-1])
+            {
+                count=1;
+                nums[index]=nums[cur];
+                ++index;
+            }
+            else {//nums[cur]==nums[cur-1]
+                if(count<2)//allow k elements duplicate
+                {
+                    nums[index++]=nums[cur];
+                    ++count;
+                }
+            }
+            ++cur;
+        }
+        return index;
+    }
