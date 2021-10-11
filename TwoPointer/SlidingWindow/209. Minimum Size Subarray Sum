@@ -1,0 +1,23 @@
+class Solution {
+    public int minSubArrayLen(int target, int[] nums) {
+        //Sliding Window
+        //Time O(n) Space O(1)
+        //preSum
+        if(nums.length==0) return 0;
+        int n=nums.length;
+        int sum=0;
+        int cur=0,index=0;
+        int minLength=Integer.MAX_VALUE;
+        while(cur<n)
+        {
+            sum+=nums[cur++];
+            while(sum>=target)
+            {
+                minLength=Math.min(minLength,cur-index);
+                sum-=nums[index];
+                ++index;
+            }
+        }
+        return minLength==Integer.MAX_VALUE? 0:minLength;
+    }
+}
