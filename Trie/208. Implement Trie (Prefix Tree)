@@ -1,0 +1,54 @@
+class Trie {
+        Node root;
+
+        public Trie() {
+            root = new Node();
+        }
+
+        public void insert(String word) {
+            Node curr = root;
+            for (char c : word.toCharArray()) {
+                if (curr.nodes[c - 'a'] == null) {
+                    curr.nodes[c - 'a'] = new Node(c);
+                }
+                curr = curr.nodes[c - 'a'];
+            }
+            curr.isWord = true;
+        }
+
+        public boolean search(String word) {
+            Node curr = root;
+            for (char c : word.toCharArray()) {
+                if (curr.nodes[c - 'a'] == null) {
+                    return false;
+                }
+                curr = curr.nodes[c - 'a'];
+            }
+            return curr.isWord;
+        }
+
+        public boolean startsWith(String prefix) {
+            Node curr = root;
+            for (char c : prefix.toCharArray()) {
+                if (curr.nodes[c - 'a'] == null) {
+                    return false;
+                }
+                curr = curr.nodes[c - 'a'];
+            }
+            return true;
+
+        }
+    }
+
+    class Node {
+        boolean isWord;
+        Node[] nodes = new Node[26];
+        char val;
+
+        public Node() {
+
+        }
+        public Node(char c) {
+            val = c;
+        }
+    }
