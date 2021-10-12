@@ -1,0 +1,45 @@
+class Solution {
+    //Time O(n) n为节点数量 Space O(1)
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode begin;
+        if(head==null||head.next==null||k==1)
+        {
+            return head;
+        }
+        ListNode dummy=new ListNode(-1);
+        begin=dummy;
+
+        int i=0;
+        while (head!=null)
+        {
+            ++i;
+            if(i%k==0)
+            {
+                begin=reverse(begin,head.next);
+                head=begin.next;
+            }
+            else {
+                head=head.next;
+            }
+        }
+        return dummy.next;
+    }
+    public ListNode reverse(ListNode begin,ListNode end)
+    {
+        ListNode cur=begin.next;//first 是当前反转列表的第一个节点，
+        ListNode next,first;
+        ListNode prev=begin;
+        first=cur;
+        while(cur!=end)
+        {
+            next=cur.next;
+            cur.next=prev;
+            prev=cur;
+            cur=next;
+        }
+        begin.next=prev;
+        first.next=cur;
+        return first;
+    }
+
+}
