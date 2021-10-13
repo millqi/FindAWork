@@ -1,0 +1,40 @@
+class Solution {
+    //若a>=0 数组两边大中间小，若a<0 数组两边小中间大
+    public int[] sortTransformedArray(int[] nums, int a, int b, int c) {
+        int n=nums.length;
+        int res[]=new int[n];
+        int frt=0,end=n-1;
+        int index= a>=0? n-1:0;//新数组插入元素的位置
+        while(frt<=end)
+        {
+            int sumFrt=calculator(nums[frt],a,b,c);
+            int sumEnd=calculator(nums[end],a,b,c);
+            if(a>=0)
+            {
+                res[index--]=  sumFrt>=sumEnd? sumFrt:sumEnd;
+                if(sumFrt>=sumEnd) {
+                    ++frt;
+                }
+                else {
+                    --end;
+                }
+            }
+            else {
+                res[index++]= sumFrt>=sumEnd? sumEnd:sumFrt;
+                if(sumFrt>=sumEnd)
+                {
+                    --end;
+                }
+                else {
+                    ++frt;
+                }
+            }
+        }
+        return res;
+    }
+    private int calculator(int x,int a,int b,int c)
+    {
+        return a*x*x+b*x+c;
+    }
+
+}
