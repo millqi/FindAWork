@@ -1,0 +1,27 @@
+class Solution {
+    public String multiply(String num1, String num2) {
+        //Time O(n*m) Space o(n+m)
+        if(num1.equals("0")||num2.equals("0")) return "0";
+        int num1Length=num1.length(),num2Length=num2.length();
+        int pos[]=new int[num1Length+num2Length];
+        for(int i=num1Length-1;i>=0;--i)
+        {
+            for(int j=num2Length-1;j>=0;--j)
+            {
+                int res= (num1.charAt(i)-'0')*(num2.charAt(j)-'0');
+                int low=i+j+1;
+                int high=i+j;
+                int sum=res+pos[low];
+                pos[high] += sum/10;
+                pos[low]=sum%10;
+            }
+        }
+        StringBuilder sb=new StringBuilder();
+        for(int num:pos)
+        {
+            if(sb.length()!=0||num!=0)
+                sb.append(num);
+        }
+        return sb.toString();
+    }
+}
