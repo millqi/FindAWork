@@ -1,0 +1,30 @@
+class Solution {
+    //Time O(n) Space O(1)
+    /*
+              i+1 house
+rob            dp[i-1]+value[i+1]
+Not rob        dp[i]
+
+     */
+    public int rob(int[] nums) {
+        if(nums.length==1) return nums[0];
+        //Rob the First House
+        int prev1=0,prev2=0;
+        for(int i=0;i< nums.length-1;++i)
+        {
+            int temp=prev1;
+            prev1=Math.max(prev2+ nums[i],prev1);
+            prev2=temp;
+        }
+        int max=prev1;
+        prev1=0;prev2=0;
+        for(int i=1;i< nums.length;++i)
+        {
+            int temp=prev1;
+            prev1=Math.max(prev2+ nums[i],prev1);
+            prev2=temp;
+        }
+        max=Math.max(max,prev1);
+        return max;
+    }
+}
