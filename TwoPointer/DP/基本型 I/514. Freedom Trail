@@ -1,0 +1,62 @@
+class Solution {
+    public int findRotateSteps(String ring, String key) {
+        int ringLength=ring.length(),keyLength=key.length();
+        int dp[][]=new int[keyLength+1][ringLength];
+        /*
+        dp[i][j] 表示从i位置开始 key串到目标字符的最少步数
+        i表示当前要求的字符
+        j表示当前ring中第j个字符在12点位置的情况
+        k用作在当前ring中第j个字符在十二点的时候，搜索ring中与i相同的字符，并计算k到在当前12点的字符的距离（顺时针与逆时针）
+         */
+        for(int i=keyLength-1;i>=0;--i)
+        {
+            for(int j=0;j<ringLength;++j)//当前指向第j个字符
+            {
+                dp[i][j]=Integer.MAX_VALUE;//j ring
+                for(int k=0;k<ringLength;++k)//k找与i相同的字符
+                {
+                    if(ring.charAt(k)==key.charAt(i))//key g  ring godding
+                    {
+                        int diff=Math.abs(j-k);
+                        int step=Math.min(diff,ringLength-diff);
+                        //维持原样||从dp[i+1][k]加上旋转的步数
+                        dp[i][j]=Math.min(dp[i][j],step+dp[i+1][k]);
+                    }
+                    //dp[1][0]=2 dp[1][1]=1 dp[1][2]=0 ... dp[1][6]=3
+                    //dp[0][0]=0(从第0个与第6个之间选) dp[0][1]=1 dp[0][2]=2 ... dp[0][6]=0
+                }
+            }
+        }
+        return dp[0][0]+keyLength;//加上按按钮需要的次数
+
+    }
+    public int findRotateSteps(String ring, String key) {
+        int m = ring.length();
+        int n = key.length();
+        HashMap<Character,List<Integer>> map = new HashMap<>();
+        for(int i = 0;i<m;i++)
+        {
+            char c = ring.charAt(i);
+            map.putIfAbsent(c, new ArrayList<Integer>());
+            map.get(c).add(i);
+        }
+        int[][] dp = new int[n][m];
+        for(int i = 0;i<n;i++) Arrays.fill(dp[i],Integer.MAX_VALUE);
+        //第一次处理，因为第一次转的时候没有前一次状态
+        for(int i : map.get(key.charAt(0))) dp[0][i] = Math.min(dp[0][i],Math.min(i,m-i));
+        for(int i = 1;i<n;i++)
+        {
+            for(int j : map.get(key.charAt(i)))
+            {
+                for(int k : map.get(key.charAt(i-1)))
+                {
+                    dp[i][j] = Math.min(dp[i][j],dp[i-1][k]+Math.min(Math.abs(k-j),m-Math.abs(k-j)));
+                }
+            }
+        }
+        int res = Integer.MAX_VALUE;
+        for(int i = 0;i<m;i++) res = Math.min(res,dp[n-1][i]);
+        return res+n;
+    }
+
+}
