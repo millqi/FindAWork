@@ -1,0 +1,56 @@
+class Solution {
+    public List<Integer> countSmaller(int[] nums) {
+        int sorted[]=Arrays.copyOf(nums,nums.length);
+        Arrays.sort(sorted);
+        Map<Integer,Integer> ranks=new HashMap<>();
+        int rank=0;
+        for(int i=0;i< sorted.length;++i)
+        {
+            if(i==0||sorted[i]!=sorted[i-1])
+            {
+                ranks.put(sorted[i],++rank);
+            }
+        }
+
+        FenwickTree tree=new FenwickTree(ranks.size());
+        List<Integer> res=new ArrayList<>();
+        for(int i=nums.length-1;i>=0;--i)
+        {
+            int sum=tree.count(ranks.get(nums[i])-1);
+            res.add(sum);
+            tree.update(ranks.get(nums[i]),1);
+        }
+        // 5 2 6 1
+        // 3 2 4 1
+        // 0 1 1 1 1
+        return res;
+    }
+    private static int nextInt(int x)
+    {
+        return x&(-x);
+    }
+    class FenwickTree{
+        private int[] nums;
+        public FenwickTree(int n){
+            nums=new int[n+1];
+        }
+        public void update(int i,int increaseNum)
+        {
+            while(i<nums.length)
+            {
+                nums[i]+=increaseNum;
+                i+=nextInt(i);
+            }
+        }
+        public int count(int i)
+        {
+            int sum=0;
+            while(i>0)
+            {
+                sum+=nums[i];
+                i-=nextInt(i);
+            }
+            return sum;
+        }
+    }
+}
