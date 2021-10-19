@@ -8,6 +8,12 @@ class Solution {
         Arrays.sort(copy);
         //nums
         //1 3 2 3 1
+
+        //2 4 3 1 5
+        //2 4 3   1 5
+        //2 4   3   1    5
+        //2   4   3   1   5
+
         //1 1 2 3 3
         //1存在bit中的1  2存在bit中的3  3存在bit中的4
         //sorted中的元素，使用第一次出现的元素作为bit中的索引
@@ -56,5 +62,42 @@ class Solution {
             bit[i] += 1;
             i -= i & -i;
         }
+    }
+    //归并排序解法，Time O(NlogN) Space O(N+logN)
+    public int reversePairs(int[] nums) {
+        return reversePairsSub(nums, 0, nums.length - 1);
+    }
+
+    private int reversePairsSub(int[] nums, int l, int r) {
+        if(l>=r) return 0;
+        int mid=l+((r-l)>>1);
+        int res=reversePairsSub(nums,l,mid)+reversePairsSub(nums,mid+1,r);
+        int leftIndex=l,rightIndex=mid+1,newIndex=0,cur=mid+1;
+        int merge[]=new int[r-l+1];
+        //处理左边数组
+        while(leftIndex<=mid)
+        {
+            //找到右侧数组符合条件的最大值
+            while(cur<=r&&nums[leftIndex]>2L*nums[cur])
+            {
+                cur++;
+            }
+            //计算符合条件的元素个数
+            res+=cur-(mid+1);
+            //把右边数组小于当前左边数组的元素放入merge中
+            while(rightIndex<=r&&nums[leftIndex]>=nums[rightIndex])
+            {
+                merge[newIndex++]=nums[rightIndex++];
+            }
+            //一轮计算完之后将左边当前元素放入merge中
+            merge[newIndex++]=nums[leftIndex++];
+        }
+        //右边数组剩余元素加入至merge数组
+        while(rightIndex<=r)
+        {
+            merge[newIndex++]=nums[rightIndex++];
+        }
+        System.arraycopy(merge,0,nums,l,merge.length);
+        return res;
     }
 }
