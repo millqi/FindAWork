@@ -1,0 +1,26 @@
+class Solution {
+    public ListNode plusOne(ListNode head) {
+        //Time O(n) Space O(1)
+        ListNode dummy=new ListNode(0);//前置头节点，若全部为9，则该节点作最高位使用
+        dummy.next=head;
+        ListNode frt=dummy;
+        ListNode end=dummy;
+        while(end!=null)
+        {
+            if(end.val!=9)
+            {
+                frt=end;
+            }
+            end=end.next;
+        }
+        ++frt.val;frt=frt.next;
+        while(frt!=null)
+        {
+            frt.val=0;
+            frt=frt.next;
+        }
+        if(dummy.val==0)
+            return dummy.next;
+        return dummy;
+    }
+}
