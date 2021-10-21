@@ -1,0 +1,51 @@
+class Solution {
+    //Time O(length - duplicated Nodes n) Space O(1)
+    public ListNode deleteDuplicatesUnsorted(ListNode head) {
+        Map<Integer, Integer> map = new HashMap<>();
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode curr = dummy;
+
+        //Iterate through linked list
+        for(ListNode i = head; i != null; i = i.next) {
+            map.put(i.val, map.getOrDefault(i.val, 0) + 1);
+        }
+
+        while(curr.next != null) {
+            if(map.get(curr.next.val) > 1) {
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+
+        return dummy.next;
+    }
+
+    public ListNode deleteDuplicatesUnsorted(ListNode head) {
+
+
+        int[] count = new int[100001];
+
+        ListNode current = head;
+
+        while(current != null){
+            count[current.val]++;
+            current = current.next;
+        }
+
+        ListNode sentinel = new ListNode(0);
+        sentinel.next = head;
+        current = sentinel;
+
+        while(current.next != null){
+
+            if(count[current.next.val] > 1){
+                current.next = current.next.next;
+            }else current = current.next;
+        }
+
+        return sentinel.next;
+
+    }
+}
