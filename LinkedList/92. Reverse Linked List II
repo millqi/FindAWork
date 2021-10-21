@@ -1,0 +1,27 @@
+class Solution {
+    //Time O(n) Space O(1)
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+        ListNode dummy=new ListNode(-1);
+        ListNode prev=dummy;
+        dummy.next=head;
+        for(int i=0;i<left-1;++i)
+        {
+            prev=prev.next;
+        }
+        ListNode first=prev.next;//反转列表的第一个节点，反转后的最后一个节点
+        ListNode Iterprev=prev;//反转列表的前节点
+        ListNode cur=prev.next;//反转列表的现在节点
+        for(int i=left;i<=right;++i)
+        {
+            ListNode next=cur.next;
+            cur.next=Iterprev;
+            Iterprev=cur;
+            cur=next;
+        }
+        //此时cur是后面列表的第一个节点 Iterprev是反转列表的第一个节点
+        first.next=cur;
+        prev.next=Iterprev;
+
+        return dummy.next;
+    }
+}
