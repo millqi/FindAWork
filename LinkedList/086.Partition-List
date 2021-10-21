@@ -1,0 +1,32 @@
+class Solution {
+    //Time O(n) Space O(1)
+    public ListNode partition(ListNode head, int x) {
+        ListNode smallerHead=new ListNode(-10000);
+        ListNode smallerCur=smallerHead;
+        ListNode cur=head;
+
+        ListNode biggerHead=new ListNode(-10000);
+        ListNode biggerCur=biggerHead;
+        while(cur!=null)
+        {
+            if(cur.val<x)
+            {
+                smallerCur.next=cur;
+                smallerCur=smallerCur.next;
+                cur=cur.next;
+            }
+            else {
+                while(cur!=null&&cur.val>=x)
+                {
+                    biggerCur.next=cur;
+                    biggerCur=biggerCur.next;
+                    cur=cur.next;
+                }
+                biggerCur.next=null;//切断当前大链表连向之后链表的链接（也有可能该节点是末尾，但无影响）
+            }
+        }
+        smallerCur.next=biggerHead.next;
+
+        return smallerHead.next;
+    }
+}
