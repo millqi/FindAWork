@@ -1,0 +1,33 @@
+class Solution {
+    //Time O(n) Space O(logN) recursive call stack
+    ListNode cur;
+    public TreeNode sortedListToBST(ListNode head) {
+        if(head==null) return null;
+        //1 find the length of list
+        ListNode indicator=head;
+        this.cur=head;
+        int length=0;
+        while(indicator!=null)
+        {
+            ++length;
+            indicator=indicator.next;
+        }
+        return inorderTransversal(0,length-1);
+    }
+    public TreeNode inorderTransversal(int start,int end)
+    {
+        //2 build the tree
+        if(start>end)
+        {
+            return null;
+        }
+        int mid=start+(end-start)/2;
+        TreeNode left=inorderTransversal(start,mid-1);
+        TreeNode root=new TreeNode(cur.val);
+        root.left=left;
+        cur=cur.next;
+        TreeNode right=inorderTransversal(mid+1,end);
+        root.right=right;
+        return root;
+    }
+}
