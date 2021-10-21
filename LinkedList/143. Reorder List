@@ -1,0 +1,41 @@
+class Solution {
+    //Time O(2n) Space O(1)
+    public void reorderList(ListNode head) {
+        if(head==null||head.next==null) return;
+        ListNode slow=head;
+        ListNode fast=head;
+        while(fast.next!=null&&fast.next.next!=null)
+        {
+            slow=slow.next;
+            fast=fast.next.next;
+        }
+        //反转列表开始
+        ListNode prev=slow;//反转链表的前驱节点
+        ListNode cur=slow.next;//反转列表的现在操作的节点
+        ListNode first=slow.next;//记录反转链表的开头
+        while(cur!=null)
+        {
+            ListNode next=cur.next;
+            cur.next=prev;
+            prev=cur;
+            cur=next;
+        }
+        first.next=null;//原链表的头连接着中间节点,将它的next设置为null,去环
+        slow.next=prev;//原链表的尾巴，将中间节点的next指针接上
+
+
+        ListNode mid=slow;//记录中间节点
+        fast=mid.next;//fast一开始为后半链表的第一个节点
+        slow=head;//slow 一开始为原链表的第一个节点
+        while(slow!=mid)//分割时 如果链表复数个，则个数相等，如果是单数个，左边链表永远比右边大一个
+        {
+            mid.next=fast.next;//利用midnext记录fast的下一个节点
+            fast.next=slow.next;//fast next指向slow下一个节点
+            slow.next=fast;//slow指向fast
+            slow=fast.next;//slow变成原链表的第二个节点,依靠fast节点记录了slow的next
+            fast=mid.next;//fast前往下一个
+        }
+
+        return ;
+    }
+}
