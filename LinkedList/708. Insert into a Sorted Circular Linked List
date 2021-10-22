@@ -1,0 +1,55 @@
+class Solution {
+    public Node insert(Node head, int insertVal) {
+        if(head==null)
+        {
+            head=new Node(insertVal);
+            head.next=head;
+            return head;
+        }
+        Node cur=head.next;
+        int max=head.val;
+        int min=head.val;
+        //找出数组中最大和最小值
+        while(cur!=head)
+        {
+            max=Math.max(max,cur.val);
+            min=Math.min(min,cur.val);
+            cur=cur.next;
+        }
+
+        cur=head;
+        Node next=cur.next;
+        /*
+        如果数字在最大最小值中间，则需要双指针找到适当的空隙，cur大于等于该数字，prev小于等于该数字
+         */
+        if(insertVal<=max&&insertVal>=min)
+        {
+            while(true)
+            {
+                if(cur.val<=insertVal&&insertVal<= next.val)
+                {
+                    cur.next=new Node(insertVal);
+                    cur.next.next=next;
+                    break;
+                }
+                cur=cur.next;
+                next=next.next;
+            }
+        }
+        else {
+            while(cur.val!=max)
+            {
+                cur=cur.next;
+            }
+            while(cur.val==cur.next.val&&cur!=cur.next&&cur.next!=head)
+            {
+                cur=cur.next;
+            }
+            next=cur.next;
+            cur.next=new Node(insertVal);
+            cur.next.next=next;
+        }
+        return head;
+
+    }
+}
