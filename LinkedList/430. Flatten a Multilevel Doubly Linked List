@@ -1,0 +1,90 @@
+class Solution {
+    //Time O(n) Space O(1)
+    public Node flatten(Node head) {
+        if(head==null) return head;
+
+        Node cur=head;
+
+        while(cur!=null)
+        {
+            if(cur.child==null)
+            {
+                cur=cur.next;
+            }
+            else {
+                Node temp=cur.child;
+                while(temp.next!=null)
+                {
+                    temp=temp.next;
+                }
+
+                temp.next=cur.next;
+                if(cur.next!=null)//注意检查上一行的节点是否存在后续节点
+                    cur.next.prev=temp;
+                cur.next=cur.child;
+                cur.child.prev=cur;
+                cur.child=null;
+                //处理完之后下一次循环cur将会跳到child，因为cur.next更改为指向cur原本的child
+            }
+        }
+        return head;
+    }
+    //Time O(n) Space O(n) Recursive
+    public Node flatten(Node head) {
+        flattentail(head);
+        return head;
+    }
+
+    // flattentail: flatten the node "head" and return the tail in its child (if exists)
+    // the tail means the last node after flattening "head"
+
+    // Five situations:
+    // 1. null - no need to flatten, just return it
+    // 2. no child, no next - no need to flatten, it is the last element, just return it
+    // 3. no child, next - no need to flatten, go next
+    // 4. child, no next - flatten the child and done
+    // 5. child, next - flatten the child, connect it with the next, go next
+
+    private Node flattentail(Node head) {
+        if (head == null) return head; // CASE 1
+        if (head.child == null) {
+            if (head.next == null) return head; // CASE 2
+            return flattentail(head.next); // CASE 3
+        }
+        else {
+            Node child = head.child;
+            head.child = null;
+            Node next = head.next;
+            Node childtail = flattentail(child);
+            head.next = child;
+            child.prev = head;
+            if (next != null) { // CASE 5
+                childtail.next = next;
+                next.prev = childtail;
+                return flattentail(next);
+            }
+            return childtail; // CASE 4
+        }
+    }
+    //Time O(n) Space O(n) Iterate
+    public Node flatten(Node head) {
+        Node curt = head;
+        Stack<Node> stack = new Stack<>(); // store curt.next when curt.child is not null
+
+        while(curt != null) {
+            if(curt.child != null) {
+                stack.push(curt.next); // might be null
+                curt.next = curt.child;
+                if(curt.next != null) curt.next.prev = curt;
+                curt.child = null;
+            } else if(curt.next == null && !stack.isEmpty()) { // reach of tail of child, reconnet the next of parent
+                curt.next = stack.pop();
+                if(curt.next != null) curt.next.prev = curt;
+            }
+
+            curt = curt.next;
+        }
+
+        return head;
+    }
+}
