@@ -1,0 +1,29 @@
+class Solution {
+//Time O(logn) Space O(1)
+   public int findMin(int[] nums) {
+        if(nums.length==0) return -1;
+        
+        int frt=0,end=nums.length-1;
+        while(frt<end)
+        {
+            /*剪枝
+            当第一次前面的数小于后面的数，则是前面指针指向的数为结果
+            */
+            if(nums[frt]<nums[end])
+            {
+                return nums[frt];
+            }
+            int mid=frt+(end-frt)/2;
+            //当中间值大于前面的值，证明frt是在原数组的后半部分
+            if(nums[mid]>=nums[frt])
+            {
+                frt=mid+1;
+            }
+            //否则frt指向的数大于mid所指向的数时，frt其实是在数组的后半部分
+            else {
+                end=mid;
+            }
+        }
+        return nums[frt];
+    }
+}
