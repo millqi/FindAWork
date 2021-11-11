@@ -1,0 +1,41 @@
+public class Solution {
+    //Time O(logN)重复数据越多越接近O(N)  Space O(1)
+    //相比没变种，加了跳过重复数据与判断当前left是否大于right(已经剩下重复数据)
+    public boolean search(int[] nums, int target) {
+        int left=0,right=nums.length-1,mid;
+        while (left<right)
+        {
+            while(left<right&&nums[left]==nums[left+1])
+            {
+                ++left;
+            }
+            while(right>left&&nums[right]==nums[right-1]){
+                --right;
+            }
+            if(left>=right)
+            {
+                break;//防止数组中元素全部相同
+            }
+            mid = left+(right-left)/2;
+            if (nums[mid]==target) return true;//剪枝提前判断
+            // mid target在同一个区段
+            //[4,5,6,7,0,1,2]     [7,0,1,2,4,5,6]
+            //target 5            target 1
+            if (nums[left]<=nums[mid] && nums[left]<=target || nums[left]>nums[mid] && nums[left]>target) //在同一个区段
+            {
+                if (target<nums[mid])
+                    right = mid;
+                else
+                    left = mid+1;
+            }
+            //mid target在不同区段
+            //[4,5,6,7,0,1,2]     [5,6,7,0,1,2,4]
+            //target 1            target 6
+            else if (nums[left]<=nums[mid] && nums[left]>target) //left和mid是原数组的后半部分，target是在较小的前半部分
+                left = mid+1;
+            else if (nums[left]>nums[mid] && nums[left]<=target) //left、target是在后半部分 mid在前半部分
+                right = mid;
+        }
+        return nums[left]==target;//当数组长度是一的时候，不会经过循环
+    }
+}
