@@ -1,0 +1,43 @@
+public class Solution {
+    public int findPeakElement(int[] nums) {
+        /*
+         5   5                           5
+        / \ / \                         / \
+       4   4   4                       4  -∞
+      /         \                     /
+     3           3           3       3
+    /             \         / \     /
+   2               2       2   2   2
+  /                 \     /     \ /
+-∞                   1   1       1
+                      \ /
+                       0
+   0 1 2 3 4 5 6 7 8 910111213141516171819 indices
+   2,3,4,5,4,5,4,3,2,1,0,1,2,3,2,1,2,3,4,5 (20 nums)
+   l                 m                   r l=0, m=9, r=19
+   l       m         r                     l=0, m=4, r= 9
+             l   m   r                     l=5, m=7, r= 9
+             l>m r                         l=5, m=6, r= 7
+  return n[l] > n[l + 1])? l : r
+         */
+        //Time O(logN) Space O(1)
+        //[1,2,1,3,5,6,4]
+        //[4,6,5,3,1,2,1]
+        int n=nums.length;
+        if(n==1)
+            return 0;
+        int frt=0,end=n-1;
+        while(end-frt>1)
+        {
+            int mid=frt+(end-frt)/2;
+            if(nums[mid]<nums[mid+1])
+            {
+                frt=mid+1;
+            }
+            else {
+                end=mid;
+            }
+        }
+        return (frt==n-1||nums[frt]>nums[frt+1])? frt:end;
+    }
+}
