@@ -1,0 +1,37 @@
+public class Solution {
+    public double findMedianSortedArrays(int[] A, int[] B) {
+        int m = A.length;
+        int n = B.length;
+        // make sure m <= n
+        if (m > n) return findMedianSortedArrays(B, A);
+
+        int imin = 0, imax = m;
+        while (imin <= imax) {
+            int mid1 = imin + (imax - imin) / 2;
+            int mid2 = (m + n + 1) / 2 - mid1;
+            //A [1,2,3,4,5,6]
+            //B [3,4,5,6,7,8]
+
+            //A [1,2,3] B[4,5,6] 这种极端情况会使 A_left=3 A_right=Max B_left=Min B_right=4
+            //若A的长度小于B的长度 A [1,2,3] B[4,5,6,7] 真正中位数是4 mid1 会越界，而A [1,2,3,4] B[5,6,7]则不会越界
+            int A_left = mid1 == 0 ? Integer.MIN_VALUE : A[mid1 - 1];
+            int A_right = mid1 == m ? Integer.MAX_VALUE : A[mid1];
+            int B_left = mid2 == 0 ? Integer.MIN_VALUE : B[mid2 - 1];
+            int B_right = mid2 == n ? Integer.MAX_VALUE : B[mid2];
+
+            if (A_left > B_right) {//说明A数组中间数大了，得小一点
+                imax = mid1 - 1;
+            } else if (B_left > A_right) {//说明B数组中间数打了，A数组中间数要大一点
+                imin = mid1 + 1;
+            } else {
+                int max_left = A_left > B_left ? A_left : B_left;
+                int min_right = A_right > B_right ? B_right : A_right;
+                if ((m + n) % 2 == 1)
+                    return max_left; // # of left_part = # of right_part + 1;
+                else
+                    return (max_left + min_right) / 2.0;
+            }
+        }
+        return -1;
+    }
+}
