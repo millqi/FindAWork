@@ -1,0 +1,36 @@
+public class Solution {
+    public int countNodes(TreeNode root) {
+        //Time O(logN) SpaceO(logN)每次只有一边是需要递归count，另一边必定是左右深度一样直接返回
+        int leftDepth=leftDepth(root);
+        int rightDepth=rightDepth(root);
+        if(leftDepth==rightDepth)
+        {
+            //2^leftDepth -1
+            //若为null，则leftDepth为0，rightDepth为0，会返回0
+            return (1<<leftDepth) -1;
+        }
+        else {
+            return 1+countNodes(root.left)+countNodes(root.right);
+        }
+    }
+    private int leftDepth(TreeNode root)
+    {
+        int depth=0;
+        while(root!=null)
+        {
+            root=root.left;
+            depth++;
+        }
+        return depth;
+    }
+    private int rightDepth(TreeNode root)
+    {
+        int depth=0;
+        while(root!=null)
+        {
+            root=root.right;
+            depth++;
+        }
+        return depth;
+    }
+}
