@@ -1,0 +1,43 @@
+public class Solution {
+    public int[] searchRange(int[] nums, int target) {
+        /*
+        直接二分查找，到最后落到潜在重复数字区间时，直接将frt往前移动，end往后移动
+        注意开头时直接检测target是否小于或者大于整个数组
+        Time O(logN)最差情况O(N) Space O(1)
+         */
+        if(nums.length==0||nums[0]>target||nums[nums.length-1]<target) return new int[]{-1,-1};
+        int frt=0,end=nums.length-1;
+        while(frt<end)
+        {
+            if(nums[frt]==nums[end])
+                break;
+            int mid=frt+(end-frt)/2;
+            if(nums[mid]<target)
+            {
+                frt=mid+1;
+            }
+            else if(nums[mid]>target)
+            {
+                end=mid;
+            }
+            else {
+                frt=mid;
+                end=mid;
+            }
+        }
+        //此时frt=end有可能两种情况，第一种是目标未找到，第二种是在n个目标里的其中一个
+        if(nums[frt]!=target)
+        {
+            return new int[]{-1,-1};
+        }
+        else {
+            while(frt>0&&nums[frt]==nums[frt-1])
+                --frt;
+            while(end<nums.length-1&&nums[end]==nums[end+1])
+            {
+                ++end;
+            }
+            return new int[]{frt,end};
+        }
+    }
+}
