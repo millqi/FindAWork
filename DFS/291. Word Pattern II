@@ -1,0 +1,45 @@
+public class Solution {
+     //Time O(n^2) SpaceO(n)
+    public boolean wordPatternMatch(String pattern, String s) {
+        return isMatch(s,0,pattern,0,new HashMap<>(),new HashSet<>());
+    }
+    public boolean isMatch(String str, int strIndex, String pat, int patIndex, Map<Character, String> map, Set<String> set) {
+        /*
+        1.检查最后情况
+        2.检查当前模式是否已经在Map中，如果没有，放入模式，如果有，则递归验证
+         */
+        if (strIndex==str.length()&&pat.length()==patIndex) return true;
+        if (strIndex==str.length()||pat.length()==patIndex) return false;
+
+        char c=pat.charAt(patIndex);
+
+        if(map.containsKey(c))
+        {
+            String patten=map.get(c);
+            if(!str.startsWith(patten,strIndex))
+            {
+                return false;
+            }
+            return isMatch(str,strIndex+patten.length(),pat,patIndex+1,map,set);
+        }
+        for(int i=strIndex;i<str.length();++i)
+        {
+            String temp=str.substring(strIndex,i+1);
+
+            if(set.contains(temp))
+                continue;
+
+            map.put(c,temp);
+            set.add(temp);
+
+            if(isMatch(str,i+1,pat,patIndex+1,map,set))
+            {
+                return true;
+            }
+
+            map.remove(c);
+            set.remove(temp);
+        }
+        return false;
+    }
+}
