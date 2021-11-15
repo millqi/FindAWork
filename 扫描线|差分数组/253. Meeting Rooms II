@@ -1,5 +1,5 @@
 public class Solution {
-    //Time O(nlogn) 需要先排序logN 然后O(n)扫描 Space O(1)
+    //Time O(nlogn) 需要先排序logN 然后O(n)扫描 Space O(n)
     public int minMeetingRooms(int[][] intervals) {
         int starts[] =new int[intervals.length];
         int ends[] =new int[intervals.length];
