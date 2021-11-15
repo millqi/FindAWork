@@ -1,0 +1,18 @@
+class MyCalendarThree {
+        TreeMap<Integer,Integer> calendar;
+        public MyCalendarThree() {
+            calendar=new TreeMap<>();
+        }
+        //Time O(nlogn) n是遍历map所用的时间，logn是红黑树排列  Space O(n)
+        public int book(int start, int end) {
+            calendar.put(start,calendar.getOrDefault(start,0)+1);
+            calendar.put(end,calendar.getOrDefault(end,0)-1);
+            int cur=0,max=0;
+            for(int v: calendar.values())
+            {
+                cur+=v;
+                max=Math.max(max,cur);
+            }
+            return max;
+        }
+    }
