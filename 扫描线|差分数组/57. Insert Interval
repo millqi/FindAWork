@@ -1,0 +1,29 @@
+public class Solution {
+    //Time O(n) 遍历一次数组 Space(n) 记录新数组
+    public int[][] insert(int[][] intervals, int[] newInterval) {
+        List<int[]> result=new LinkedList<>();
+        int index=0;
+        //跳过所有结束时间比newInterval开始时间小的intervals
+        while(index<intervals.length&&intervals[index][1]<newInterval[0])
+        {
+            result.add(intervals[index++]);
+        }
+        //目前已经到了结束时间比newInterval开始时间大的interval
+        //将暂时结果存放在newInterval中，开始时间选取之后intervals的最小开始时间，结束时间选取最大的
+        //当结束时间比遍历到的interval开始时间小，结束循环
+        while(index<intervals.length&&intervals[index][0]<=newInterval[1])
+        {
+            newInterval[0]=Math.min(newInterval[0],intervals[index][0]);
+            newInterval[1]=Math.max(newInterval[1],intervals[index][1]);
+            ++index;
+        }
+        result.add(newInterval);
+        //将剩余的interval（如果有）放入List中
+        while (index<intervals.length)
+        {
+            result.add(intervals[index++]);
+        }
+        //利用API将List转换为result
+        return result.toArray(new int[result.size()][]);
+    }
+}
