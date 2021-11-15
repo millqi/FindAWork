@@ -1,0 +1,18 @@
+public int template(int[][] intervals) {
+        /*
+        1. 使用Map记录，当会议开始时，从Map中获取时间戳，并将对应值+1，如果没有，则新建。当会议结束时，也进行相同操作，但对应值-1
+        2. Custom Code 中遍历map
+        3. 自定义代码以满足题目需求
+        */
+        Map<Integer, Integer> map = new TreeMap<>();
+        for (int i=0;i< intervals.length;++i) {
+            map.put(intervals[i][0], map.getOrDefault(intervals[i][0], 0) + 1);
+            map.put(intervals[i][1], map.getOrDefault(intervals[i][1], 0) - 1);
+        }
+        //Custom Code
+        int room = 0, k = 0;
+        for (int v : map.values())
+            k = Math.max(k, room += v);
+
+        return k;
+}
