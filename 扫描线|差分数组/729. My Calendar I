@@ -1,0 +1,23 @@
+class MyCalendar {
+        TreeMap<Integer,Integer> calendar;
+        /*
+        Map<start,end>
+         */
+        public MyCalendar() {
+            calendar=new TreeMap<>();
+        }
+
+        public boolean book(int start, int end) {
+            //得到比当前start小的book
+            Integer floorKey=calendar.floorKey(start);
+            //比当前start小的book的end 大于当前book的start ，有重叠
+            if(floorKey!=null&&calendar.get(floorKey)>start) return false;
+            //得到比当前start小的book
+            Integer ceilingKey=calendar.ceilingKey(start);
+            //比当前start大的book的start 小于当前book的end ，有重叠
+            if(ceilingKey!=null&&ceilingKey<end) return false;
+            
+            calendar.put(start,end);
+            return true;
+        }
+    }
