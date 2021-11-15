@@ -1,0 +1,25 @@
+class MyCalendarTwo {
+        TreeMap<Integer,Integer> calendar;
+        public MyCalendarTwo() {
+            calendar=new TreeMap<>();
+        }
+
+        public boolean book(int start, int end) {
+            calendar.put(start,calendar.getOrDefault(start,0)+1);
+            calendar.put(end,calendar.getOrDefault(end,0)+1);
+            //cur为当前预约计数，max为历史最大值
+            int cur=0,max=0;
+            for(Integer v:calendar.values())
+            {
+                max=Math.max(max,cur+=v);
+                if(max>2)
+                {
+                    //当max大于2时，需要回溯之前的插入
+                    calendar.put(start,calendar.get(start)-1);
+                    calendar.put(end,calendar.get(end)+1);
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
