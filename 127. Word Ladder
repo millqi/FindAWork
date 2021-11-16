@@ -1,0 +1,60 @@
+public class Solution {
+    /*
+    Time O(M^2*N) N是wordList的长度，M是N转化过的单词总数
+    Space O(M^2*N) N是wordList的长度，M是从N转化的单词总数
+     */
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        if(!wordList.contains(endWord)) return 0;
+        Set<String> beginSet=new HashSet<>(),endSet=new HashSet<>(),unVisited=new HashSet<>(wordList);
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+
+        int strLen=beginWord.length();
+        int res=1;
+        /*
+        1.当beginSet大于endSet时，交换他们
+        2.初始化临时set
+        3.遍历beginSet中的word，将word的每一个单词进行a-z的替换
+        4.如果该word没有被遍历过而且存在题目所给的list中的话，将它加入临时set中,并将其从unVisited中移除。若末尾set中包含该word，则可以直接返回结果
+        5.将beginSet更新为临时set
+         */
+        while(!beginSet.isEmpty()&&!endSet.isEmpty())
+        {
+            //1
+            if(beginSet.size()>endSet.size())
+            {
+                Set<String> temp=beginSet;
+                beginSet=endSet;
+                endSet=temp;
+            }
+
+            //2
+            Set<String> temp=new HashSet<>();
+            //3
+            for(String word:beginSet)
+            {
+                char wordChar[]=word.toCharArray();
+                for(int i=0;i< wordChar.length;++i)
+                {
+                    for(char c='a';c<='z';++c)
+                    {
+                        char old=wordChar[i];
+                        wordChar[i]=c;
+                        String target=String.valueOf(wordChar);
+                        if(endSet.contains(target))
+                            return res+1;
+                        if(unVisited.contains(target)&&wordList.contains(target))
+                        {
+                            unVisited.remove(target);
+                            temp.add(target);
+                        }
+                        wordChar[i]=old;
+                    }
+                }
+            }
+            beginSet=temp;
+            ++res;
+        }
+        return 0;
+    }
+}
