@@ -1,0 +1,106 @@
+public class Solution {
+    //Time O(NK^2+a) N是wordList的长度，K是单词的长度，a是所有beginWord到endWord可能的path的数字
+    //Space O(NK)
+    /*
+    https://leetcode.com/problems/word-ladder-ii/solution/
+    */
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        if(!wordList.contains(endWord)) return new ArrayList<>();
+        Set<String> beginSet=new HashSet<>();
+        Set<String> endSet=new HashSet<>();
+        Set<String> dirt=new HashSet<>(wordList);
+        beginSet.add(beginWord);
+        endSet.add(endWord);
+        Map<String,List<String>> map=new HashMap<>();
+
+        bfs(dirt,beginSet,endSet,map,false);
+
+        List<List<String>> res = new ArrayList<List<String>>();
+        List<String> sol = new ArrayList<String>(Arrays.asList(beginWord));
+
+        // recursively build the final result
+        generateList(beginWord, endWord, map, sol, res);
+        return res;
+    }
+    private boolean bfs(Set<String> dirt,Set<String> beginSet,Set<String> endSet,Map<String,List<String>> map,boolean flip){
+        if(beginSet.isEmpty())
+            return false;
+        if(beginSet.size()>endSet.size())
+        {
+            return bfs(dirt,endSet,beginSet,map,!flip);
+        }
+        /*
+        1.从字典中移除前后set的词
+        2.遍历begin的set中的word，默认为起点
+        3.每一个word都变换字符
+        4.当beginSet没有反转时，key是（真正）beginSet中的词，value是重新构造的词。而反转过的话，key是重新构造的词，value是（真正）endSet中的词
+        5.当endSet中的词含有所构造的新词时，让完成搜索的标记设置为true，并将结果储存到map中
+        6.Map结构
+        beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+        1.hit,[hot]  2.log,[cog] dog[cog](构造时反转) 3. hot,[dot,lot] ...
+        7.若没有完成，而且字典里含有所构造的新词的时候，向下一级的beginSet中添加该词，并将map中现在便利的beginSet的词所对应的list添加该新构造的word
+        8.返回时先进行done判断，若已完成则直接结束bfs，若还没可以则调换beginSet和endSet，再次进行BFS
+         */
+        //1
+        dirt.removeAll(beginSet);
+        dirt.removeAll(endSet);
+        boolean done=false;
+        Set<String> nextLevel=new HashSet<>();
+        //2
+        for(String wordFromSet:beginSet)
+        {
+            for(int i=0;i<wordFromSet.length();++i)
+            {
+                char wordChars[]=wordFromSet.toCharArray();
+                //3
+                for(char c='a';c<='z';++c)
+                {
+                    wordChars[i]=c;
+                    String newWord=String.valueOf(wordChars);
+                    //4
+                    String key= flip? newWord : wordFromSet;
+                    String value=flip?wordFromSet:newWord;
+                    List<String> list= map.containsKey(key)?map.get(key):new ArrayList<>();
+                    if(endSet.contains(newWord))
+                    {
+                        done=true;
+                        list.add(value);
+                        map.put(key,list);
+                    }
+                    if(!done&&dirt.contains(newWord))
+                    {
+                        nextLevel.add(newWord);
+                        list.add(value);//正向时加newWord，反向时加Set中的词
+                        map.put(key,list);
+                    }
+                }
+            }
+        }
+        //提前判断done，若已经done就直接返回
+        return done||bfs(dirt,endSet,nextLevel,map,!flip);
+    }
+    //DFS构造
+    private void generateList(String start,String end,Map<String,List<String>> map,List<String> cur,List<List<String>> res)
+    {
+        //DFS结束条件
+        if(start.equals(end))
+        {
+            res.add(new ArrayList<String>(cur));
+            return;
+        }
+        // need this check in case the diff between start and end happens to be one
+        // e.g "a", "c", {"a", "b", "c"}
+        if(!map.containsKey(start))
+        {
+            return;
+        }
+
+        for(String word: map.get(start))
+        {
+            cur.add(word);
+            generateList(word,end,map,cur,res);
+            //回溯
+            cur.remove(cur.size()-1);
+        }
+    }
+}
