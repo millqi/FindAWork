@@ -1,0 +1,84 @@
+class Solution {
+    //Time <O(N) Space O(logN)
+    public int countNodes(TreeNode root) {
+        int leftDepth=leftDepth(root);
+        int rightDepth=rightDepth(root);
+        if(leftDepth==rightDepth)
+        {
+            return (1<<leftDepth)-1;
+        }
+        else {
+            return 1+countNodes(root.left)+countNodes(root.right);
+        }
+    }
+    private int leftDepth(TreeNode root)
+    {
+        int dep=0;
+        while(root!=null)
+        {
+            root=root.left;
+            dep++;
+        }
+        return dep;
+    }
+    private int rightDepth(TreeNode root)
+    {
+        int dep=0;
+        while(root!=null)
+        {
+            root=root.right;
+            dep++;
+        }
+        return dep;
+    }
+    //Time O((logN)^2) Space O(1)
+    public int countNodes(TreeNode root) {
+        if(root==null) return 0;
+        int depth=countDepth(root);//会返回实际深度-1的值
+        if(depth==0) return 1;
+        //对最底层进行搜寻
+        int left=1,right=(int) Math.pow(2,depth)-1;
+        int pivot;
+        while(left<=right)
+        {
+            pivot=left+(right-left)/2;
+            if(existed(root,depth,pivot))
+            {
+                left=pivot+1;
+            }
+            else {
+                right=pivot-1;
+            }
+        }
+        //2的depth次方幂-1刚好是树除了最后一层的节点个数，加上二分查找的最底层节点个数，left从一开始计数，结束循环时left落在最后一个节点
+        return (int)Math.pow(2,depth) -1+left;
+    }
+    private boolean existed(TreeNode root,int depth,int index){
+        int left=0, right=(int)Math.pow(2,depth)-1;
+        int pivot;
+        for(int i=0;i<depth;++i)
+        {
+            pivot=left+(right-left)/2;
+            if(index<=pivot)
+            {
+                root=root.left;
+                right=pivot;
+            }
+            else {
+                root=root.right;
+                left=pivot+1;
+            }
+        }
+        return root!=null;
+    }
+    private int countDepth(TreeNode root)
+    {
+        int depth=0;
+        while(root.left!=null)
+        {
+            ++depth;
+            root=root.left;
+        }
+        return depth;
+    }
+}
