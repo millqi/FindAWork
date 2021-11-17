@@ -1,0 +1,133 @@
+public class Solution {
+    /*
+    第一种方法
+     */
+    public String nearestPalindromic(String n) {
+        // edge cases, no
+
+        int len = n.length();
+        int i = len % 2 == 0 ? len / 2 - 1: len / 2;//半段回文的长度，奇数长度包含中间的字符
+        long left = Long.parseLong(n.substring(0, i+1));
+
+        // input: n 12345
+        List<Long> candidate = new ArrayList<>();
+        candidate.add(getPalindrome(left, len % 2 == 0)); // 12321
+        candidate.add(getPalindrome(left+1, len % 2 == 0)); // 12421
+        candidate.add(getPalindrome(left-1, len % 2 == 0)); // 12221
+        candidate.add((long)Math.pow(10, len-1) - 1); // 9999 构造比自己数字短一位的9999
+        candidate.add((long)Math.pow(10, len) + 1); // 100001 构造比自己数字长一位的100001
+        //通过比较gap来得出结果
+        long diff = Long.MAX_VALUE, res = 0, nl = Long.parseLong(n);
+        for (long cand : candidate) {
+            if (cand == nl) continue;
+            if (Math.abs(cand - nl) < diff) {
+                diff = Math.abs(cand - nl);
+                res = cand;
+            } else if (Math.abs(cand - nl) == diff) {
+                res = Math.min(res, cand);
+            }
+        }
+
+        return String.valueOf(res);
+    }
+
+    private long getPalindrome(long left, boolean even) {
+        long res = left;
+        if (!even) left = left / 10;
+        while (left > 0) {
+            res = res * 10 + left % 10;
+            left /= 10;
+        }
+        return res;
+    }
+    /*
+    第二种方法 较慢
+    Corner Case
+    n==1-9 10 100 1000....  n-1  --->0,9,99,999,9999
+    n==11,101,1001,10001,100001...... n-2 --->99,999,9999,99999
+
+    Take "12345"(odd)/"123456"(even) as an example,
+    We need to cut half of the Given Num,which can give us a new String "123"
+    Then,get the palindrome num
+    Odd
+    Smaller  123-1   "12221"
+    Equal 123 "12321"
+    Bigger 124 "12421"
+
+    Even
+    Smaller  123-1   "122221"
+    Equal 123 "123321"
+    Bigger 124 "124421"
+
+    Calculate the gap between the 3 new nums and the original one
+
+    Time O(n) ? 前期判断需要扫描数字 Space O(3) 造了3个数字
+     */
+    public String nearestPalindromic(String n) {
+        long num=Long.parseLong(n);
+        int length=n.length();
+        if(num<=10||(num%10==0&&n.charAt(0)=='1'&&Long.parseLong(n.substring(1))==0)){
+            return ""+(num-1);
+        }
+        if(num==11||(num%10==1&&n.charAt(0)=='1'&&Long.parseLong(n.substring(1,length-1))==0))
+        {
+            return ""+(num-2);
+        }
+        if(isAllDigitNine(n))
+        {
+            return ""+(num+2);
+        }
+        boolean isEven= length%2==0;
+
+        String palindromeRoot= isEven? n.substring(0,length/2):n.substring(0,length/2+1);
+
+        int root= Integer.valueOf(palindromeRoot);
+
+        long equal= toPalindromeDigits(""+root,isEven);
+        long diffEqual=Math.abs(equal-num);
+
+        long bigger=toPalindromeDigits(""+(root+1),isEven);
+        long diffBigger=Math.abs(num-bigger);
+
+        long smaller=toPalindromeDigits(""+(root-1),isEven);
+        long diffSmaller=Math.abs(num-smaller);
+
+        long closest=(diffBigger<diffSmaller)?bigger:smaller;
+        long minDiff=Math.min(diffBigger,diffSmaller);
+        //当给的数字本身就是回文的时候，equal的计算没有意义，所以直接返回bigger和smaller的gap较小的那个
+        //当不是回文数时，equal有可能比bigger和smaller的gap更小
+        if(diffEqual!=0)
+        {
+            if(diffEqual==minDiff)//如果刚好equal跟bigger和smaller的gap相等时，选取他们的最小值
+            {
+                closest=Math.min(closest,equal);
+            }
+            else if(diffEqual<minDiff)//当equal更小时，返回equal
+            {
+                return ""+equal;
+            }
+        }
+        return ""+closest;//题目所给的数字本身就是回文或者equal的gap更大，则返回bigger和smaller的gap中更小的那个
+    }
+
+    private long toPalindromeDigits(String num,boolean isEven)
+    {
+        StringBuilder reversedNum=new StringBuilder(num).reverse();
+        String palindromeDigits= isEven?
+                num+reversedNum.toString():
+                num+(reversedNum.deleteCharAt(0)).toString();
+        return Long.parseLong(palindromeDigits);
+    }
+    private  boolean isAllDigitNine(String s)
+    {
+        for(char c:s.toCharArray())
+        {
+            if(c!='9')
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+}
