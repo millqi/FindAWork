@@ -1,0 +1,34 @@
+class Solution {
+
+    /*
+    维护一个递减栈。如果遇到一个高的bar，那么以栈顶元素为洼地可以分割出一块蓄水矩形，其高度取决于栈顶元素左右两边的高度的较矮值，其宽度取决于栈顶元素之前之后的位置。比如说 [7,4,3,2,1,6]:
+
+当考察6的时候，考虑1这个洼地，可以蓄水的面积就是高=min(2,6)-1, 宽=5-3-1. 然后弹出1. 接下来考察2这个洼地，可以蓄水的面积是高=min(3,6)-1, 宽=5-2-1。注意洼地2对应的蓄水矩形在横向上是覆盖了1的，但是面积并不包括之前洼地1所算的矩形。
+
+以此类推，6可以将1,2,3,4都一次弹出。然后6就可以入栈。此时栈仍然是单调减的。
+
+把所有洼地对应的矩形都加起来就是答案。
+    */
+    //Time O(n) 一个单次遍历，取出元素计算的总数也是n次 Space O(n) 最多在栈中存储n个元素
+    public int trap(int[] height) {
+
+        Stack<Integer> stack=new Stack<>();
+        int res=0;
+        for(int i=0;i<height.length;++i)
+        {
+            while(!stack.isEmpty()&&height[stack.peek()]<height[i])
+            {
+                int base = height[stack.pop()];//底座
+                if(stack.isEmpty()) continue;
+                int h=Math.min(height[stack.peek()],height[i])-base;//取最低边为高
+                int width=i-stack.peek()-1;//计算宽度
+                res+=h*width;
+            }
+            stack.push(i);
+        }
+        return res;
+    }
+
+    //DP解法
+    //To do
+}
