@@ -1,0 +1,42 @@
+class Solution {
+    /*
+    1.构造Map 将每一类节点分配一个id，从下往上遍历，保证同一类的id分配到同一个id
+    2。构造Map 记录每一个id出现的次数，当次数超过2的时候，将它加入结果中
+    3.将节点序列化作为Map1中的Key
+
+    Time O(n) 每一个节点需要遍历一次，在map中查找时间为O(1)  Space O(nlogn) 两个HashMap和递归栈
+     */
+    private static int curId=1;
+    public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
+        Map<String,Integer> rootToId=new HashMap<>();
+        Map<Integer,Integer> idToCount=new HashMap<>();
+        List<TreeNode> res=new ArrayList<>();
+        dfs(rootToId,idToCount,res,root);
+        return res;
+    }
+    private int dfs(Map<String,Integer> rootToId,Map<Integer,Integer> idToCount,List<TreeNode> res,TreeNode root)
+    {
+        //为每一类节点分配一个独特的id
+        //以0来标记null节点
+        if(root==null) return 0;
+        int leftId=dfs(rootToId,idToCount,res,root.left);
+        int rightId=dfs(rootToId,idToCount,res,root.right);
+        String serialized=leftId+" "+ root.val+" "+rightId;
+        int id;
+        if(rootToId.containsKey(serialized))
+        {
+            id=rootToId.get(serialized);
+        }
+        else {
+            id=curId;
+            ++curId;
+            rootToId.put(serialized,id);
+        }
+        idToCount.put(id,idToCount.getOrDefault(id,0)+1);
+        if(idToCount.get(serialized)==2)
+        {
+            res.add(root);
+        }
+        return id;
+    }
+}
