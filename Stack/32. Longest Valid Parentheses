@@ -1,0 +1,90 @@
+class Solution {
+    /*
+    使用Stack的方法
+    1.使用left标记一个新序列"()()()"的起点
+    2.将遇到的(放入栈中
+    3.当遇到)时有两种情况
+    3-1.当栈是空的时候，更新left边界到该位置
+    3-2.当栈不是空的时候，有两种情况
+    3-2-1.当栈中元素是最后一个元素时，计算max是当前位置减去边界位置left
+    3-2-2.当栈中元素不是最后一个元素时，计算max时是当前位置减去peek元素的位置
+
+    Time O(n) Space O(n)
+     */
+    public int longestValidParentheses(String s) {
+        int max=0;
+        int left=-1;
+        Stack<Integer> locations=new Stack<>();
+        for(int i=0;i<s.length();++i)
+        {
+            if(s.charAt(i)=='(')
+            {
+                locations.push(i);
+            }
+            else {
+                if(locations.isEmpty())
+                {
+                    left=i;
+                }
+                else {
+                    locations.pop();
+                    if(locations.isEmpty())
+                    {
+                        max=Math.max(max,i-left);
+                    }
+                    else {
+                        max=Math.max(max,i-locations.peek());
+                    }
+                }
+            }
+        }
+        return max;
+    }
+    //Time O(2n) Space O(1)
+    /*
+    1.定义左括号计数left和右括号计数right
+    2.从前往后遍历，当left==right时可以计算最大值，当右括号个数多于当前左括号个数，则一定不是有效的序列，需要清零
+    3.从后往前遍历，当left==right时可以计算最大值，当左括号个数多于当前右括号个数，则一定不是有效的序列，需要清零
+     */
+    public int longestValidParentheses(String s) {
+        int left=0,right=0,max=0;
+        for(int i=0;i<s.length();++i)
+        {
+            if(s.charAt(i)=='(')
+            {
+                ++left;
+            }
+            else {
+                ++right;
+            }
+            if(left==right)
+            {
+                max=Math.max(max,2*left);
+            }
+            else if(right>left){
+                right=0;
+                left=0;
+            }
+        }
+        for(int i=s.length()-1;i>=0;--i)
+        {
+            if(s.charAt(i)=='(')
+            {
+                ++left;
+            }
+            else {
+                ++right;
+            }
+            if(left==right)
+            {
+                max=Math.max(max,2*right);
+            }
+            else if(left>right)
+            {
+                left=0;
+                right=0;
+            }
+        }
+        return max;
+    }
+}
