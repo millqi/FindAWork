@@ -1,0 +1,119 @@
+class Solution {
+    /*
+    Push O(1) Pop O(n)
+    插入的时候直接插入O(1)
+    Pop的时候将除了最后一个元素全部移到第二个队列，然后再交换引用
+     */
+    class MyStack {
+        Queue<Integer> queue1;
+        Queue<Integer> queue2;
+        public MyStack() {
+            queue1=new LinkedList<>();
+            queue2=new LinkedList<>();
+        }
+
+        public void push(int x) {
+            queue1.add(x);
+        }
+
+        public int pop() {
+            while(queue1.size()>1)
+            {
+                queue2.add(queue1.poll());
+            }
+            int res=queue1.poll();
+            Queue<Integer> temp=queue1;
+            queue1=queue2;
+            queue2=temp;
+            return res;
+        }
+
+        public int top() {
+            while(queue1.size()>1)
+            {
+                queue2.add(queue1.poll());
+            }
+            int res=queue1.poll();
+            Queue<Integer> temp=queue1;
+            queue1=queue2;
+            queue2=temp;
+            queue1.add(res);
+            return res;
+        }
+
+        public boolean empty() {
+            return queue1.isEmpty();
+        }
+    }
+    /*
+        Push O(n) Pop O(1)
+        插入O(n)
+        插入的时候将新元素插到q2，将q1元素全部poll进q2，并交换他们的引用
+        查询O(1)
+        因为将最近插入的元素放在了队头
+         */
+    class MyStack {
+        Queue<Integer> queue1;
+        Queue<Integer> queue2;
+        public MyStack() {
+            queue1=new LinkedList<>();
+            queue2=new LinkedList<>();
+        }
+
+        public void push(int x) {
+            queue2.add(x);
+            while(!queue1.isEmpty())
+            {
+                queue2.add(queue1.poll());
+            }
+            Queue<Integer> temp=queue1;
+            queue1=queue2;
+            queue2=temp;
+        }
+
+        public int pop() {
+            return queue1.poll();
+        }
+
+        public int top() {
+            return queue1.peek();
+        }
+
+        public boolean empty() {
+            return queue1.isEmpty();
+        }
+    }
+    /*
+    一条队列
+    插入O(n)
+    插入的时候把队列size-1个元素重新入队，将新插入元素放在队首
+    查询O(1)
+    因为新插入的元素已经在队首
+     */
+    class MyStack {
+        Queue<Integer> queue;
+        public MyStack() {
+            queue=new LinkedList<>();
+        }
+
+        public void push(int x) {
+            queue.add(x);
+            for(int i=0;i<queue.size()-1;++i)
+            {
+                queue.add(queue.poll());
+            }
+        }
+
+        public int pop() {
+            return queue.poll();
+        }
+
+        public int top() {
+            return queue.peek();
+        }
+
+        public boolean empty() {
+            return queue.isEmpty();
+        }
+    }
+}
