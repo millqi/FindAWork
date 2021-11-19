@@ -1,0 +1,44 @@
+class Solution {
+    class MinStack {
+        /*
+        -2 0 -3
+        使用一个栈，要点在两个地方
+        在压栈时，若将要压入栈的值小于整体最小值，将第二小的值重复压栈，再将新值压入栈中
+        -3
+        -2 压入当前第二小的元素来保存状态，当-3被top时，重复top来移除重复插入的数据
+        0
+        -2
+        MAX
+        Methods pop, top and getMin operations will always be called on non-empty stacks.
+        当最后pop -2时，会顺带将MAX也top出来
+         */
+        int min;
+        private Stack<Integer> stack;
+        public MinStack() {
+            stack=new Stack<>();
+            min=Integer.MAX_VALUE;
+        }
+
+        public void push(int val) {
+            if(val<=min)
+            {
+                stack.push(min);//压入第二小值 冗余来保存状态
+                min=val;
+            }
+            stack.push(val);//压入所给参数
+        }
+
+        public void pop() {
+            if(stack.pop()==min) min=stack.pop();//抽出用以保存状态的冗余元素
+        }
+
+        public int top() {
+            return stack.peek();
+        }
+
+        public int getMin() {
+            return min;
+        }
+    }
+    
+}
