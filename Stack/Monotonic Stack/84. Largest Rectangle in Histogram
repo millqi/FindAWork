@@ -1,0 +1,35 @@
+class Solution {
+    /*
+    Time O(n) Space O(n)
+     */
+    public int largestRectangleArea(int[] heights) {
+        if(heights.length==0) return 0;
+        if(heights.length==1) return heights[0];
+        Stack<Integer> stack=new Stack<>();
+        int max=0;
+        /*
+        通用模板
+        维持一个递增的单调栈，当遍历到的元素小于栈顶元素时，开始计算栈中元素并清空栈
+         */
+        for(int i=0;i<heights.length;++i)
+        {
+            while(!stack.isEmpty()&&heights[stack.peek()]>heights[i])
+            {
+                int height= heights[stack.pop()];//得到栈中最高高度的元素
+                //当前面积公式=高度*（当前遍历的位置-栈顶元素的位置）
+                //栈中2 3 4    当前元素1
+                //   0 1 2          3
+                //面积=4*(3-(1+1))注：因为我们弹出了一个元素，所以需要为坐标加1 若为最后一个元素，则直接是 2*(3-0)
+                max=Math.max(max,height*(i-(stack.isEmpty()?0: stack.peek()+1)));
+            }
+            //将当前元素入栈
+            stack.push(i);
+        }
+        //我们一直以来是计算当前位置之前的值，所以遍历到最后，栈里面会有元素没有计算，进行最后几次计算
+        while(!stack.isEmpty())
+        {
+            max=Math.max(max,heights[stack.pop()]*(heights.length-(stack.isEmpty()?0:stack.peek()+1)));
+        }
+        return max;
+    }
+}
