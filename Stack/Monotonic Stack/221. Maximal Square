@@ -1,0 +1,41 @@
+class Solution {
+    //该题与leetcode 85几乎一样，只需要在计算面积时使用 长或宽更短的边来平方即可获得结果
+    //Time O(MN) M是矩阵的长，N是矩阵的宽  Space O(M) M是矩阵的长，存储数组使用了M，栈最大时也是使用M
+    public int maximalSquare(char[][] matrix) {
+        int heights[]=new int[matrix[0].length];
+        int max=0;
+        for(int i=0;i<matrix.length;++i)
+        {
+            for(int j=0;j<matrix[0].length;++j)
+            {
+                heights[j]=matrix[i][j]=='1'? heights[j]+1:0;
+            }
+            max=Math.max(helper(heights),max);
+        }
+        return max;
+    }
+    private int helper(int heights[])
+    {
+        Stack<Integer> stack=new Stack<>();
+        int max=0;
+        for(int i=0;i<heights.length;++i){
+            while(!stack.isEmpty()&&heights[i]<heights[stack.peek()])
+            {
+                int height=heights[stack.pop()];
+                int width=i-1-(stack.isEmpty()?-1:stack.peek());
+                int len=Math.min(width,height);
+                max=Math.max(max,len*len);
+            }
+            stack.push(i);
+        }
+        while(!stack.isEmpty())
+        {
+            int height=heights[stack.pop()];
+            int width=heights.length-(stack.isEmpty()?0:stack.peek()+1);
+            int len=Math.min(width,height);
+            max=Math.max(max,len*len);
+        }
+        return max;
+    }
+
+}
