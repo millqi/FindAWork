@@ -1,0 +1,32 @@
+class Solution {
+    /*
+    Time O(n) Space O(n)
+     */
+    public int template(int[] heights) {
+        Stack<Integer> stack=new Stack<>();
+        int res=0;
+        /*
+        通用模板
+        维持一个递增的单调栈，当遍历到的元素小于栈顶元素时，开始计算栈中元素并清空栈
+        维持一个递减的单调栈，当遍历到的元素小于栈顶元素时，开始计算栈中元素并清空栈
+         */
+        for(int i=0;i<heights.length;++i)
+        {
+            while(!stack.isEmpty()&&heights[stack.peek()]>heights[i])
+            //while(!stack.isEmpty()&&heights[stack.peek()]<heights[i])
+            {
+                int element= heights[stack.pop()];
+
+                //Custom Code 计算代码
+            }
+            //将当前元素入栈
+            stack.push(i);
+        }
+        //若栈中还有元素，需要计算
+        while(!stack.isEmpty())
+        {
+            //custome code
+        }
+        return res;
+    }
+}
