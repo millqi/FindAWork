@@ -1,0 +1,20 @@
+class Solution {
+    /*
+    维持一个单调递减的栈，当遇到比栈顶元素大的元素，开始清空栈
+    Time O(n) 遍历数组两次 Space O(、n) n是数组长度
+     */
+    public int[] nextGreaterElements(int[] nums) {
+        Stack<Integer> stack=new Stack<>();
+        int res[]=new int[nums.length];
+        Arrays.fill(res,-1);
+        for(int i=0;i< nums.length*2;++i)
+        {
+            while(!stack.isEmpty()&& nums[stack.peek()]<nums[i% nums.length])
+            {
+                res[stack.pop()]=nums[i% nums.length];
+            }
+            stack.push(i% nums.length);
+        }
+        return res;
+    }
+}
