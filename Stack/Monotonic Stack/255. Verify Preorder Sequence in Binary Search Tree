@@ -28,4 +28,17 @@ class Solution {
         }
         return true;
     }
+
+    public boolean verifyPreorder(int[] preorder) {
+        //使用指针i来代替栈，当需要出栈时，i往前走，当需要入栈时，i往后走
+        int low = Integer.MIN_VALUE, i = -1;
+        for (int p : preorder) {
+            if (p < low)
+                return false;
+            while (i >= 0 && p > preorder[i])
+                low = preorder[i--];
+            preorder[++i] = p;
+        }
+        return true;
+    }
 }
