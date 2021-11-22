@@ -1,0 +1,30 @@
+class Solution {
+    /*
+    使用hashmap存储 key stack中栈顶元素 value 当前遍历的元素
+    维持一个单调递减的栈，当遇到比栈顶元素大的元素，开始清空栈
+    Time O(m+n) 遍历nums2一次，遍历nums1一次 Space O(m+n) m是hashmap，n是结果数组
+    m:nums2.length  n:nums1.length
+     */
+    public int[] nextGreaterElement(int[] nums1, int[] nums2) {
+        Stack<Integer> stack=new Stack<>();
+        HashMap<Integer,Integer> next=new HashMap<>();
+        for(int i=0;i< nums2.length;++i)
+        {
+            while(!stack.isEmpty()&& stack.peek()<nums2[i])
+            {
+                next.put(stack.pop(),nums2[i]);
+            }
+            stack.push(nums2[i]);
+        }
+        while(!stack.isEmpty())
+        {
+            next.put(stack.pop(),-1);
+        }
+        int res[]=new int[nums1.length];
+        for(int i=0;i< nums1.length;++i)
+        {
+            res[i]=next.get(nums1[i]);
+        }
+        return res;
+    }
+}
