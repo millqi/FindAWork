@@ -1,0 +1,51 @@
+class Solution {
+    /*
+    本道题类似于leetcode 84，遍历一行计算一次，每一列相当于84中的柱形图
+    当下一行含有0时，需要将对应列清零，因为不会有中间断裂的柱状图
+    Time O(MN)  Space O(M) matrix[M][N]
+     */
+    public int maximalRectangle(char[][] matrix) {
+        if (matrix.length==0) return 0;
+        if (matrix[0].length==0) return 0;
+        int heights[]=new int[matrix[0].length];
+        int max=0;
+        for(int i=0;i<matrix.length;++i)
+        {
+            for(int j=0;j<matrix[0].length;++j)
+            {
+                //若柱状图连续，则高度加一，否则高度置零
+                heights[j]= matrix[i][j]=='1'?heights[j]+1:0;
+            }
+            //计算完一行之后开始算局部最大值
+            max=Math.max(max,helper(heights));
+        }
+        return max;
+    }
+    private int helper(int[] heights)
+    {
+        if (heights.length==0) return 0;
+        if (heights.length==1) return heights[0];
+        //保持一个单调递增的栈
+        Stack<Integer> stack=new Stack<>();
+        int max=0;
+        for(int i=0;i<heights.length;++i)
+        {
+            while(!stack.isEmpty()&&heights[stack.peek()]>heights[i])
+            {
+                int height=heights[stack.pop()];
+                //计算到最后一个元素时，由于栈已经为空，所以需要判断，如果为空要补回减去的-1
+                int width=i-1-(stack.isEmpty()?-1:stack.peek());
+                max=Math.max(max,height*width);
+            }
+            stack.push(i);
+        }
+        int length=heights.length;
+        while(!stack.isEmpty())
+        {
+            int height=heights[stack.pop()];
+            int width=heights.length-1-(stack.isEmpty()?-1:stack.peek());
+            max=Math.max(max,height*width);
+        }
+        return max;
+    }
+}
