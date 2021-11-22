@@ -1,0 +1,31 @@
+class Solution {
+    public boolean verifyPreorder(int[] preorder) {
+        //preorder root -> left -> right
+        //Time O(n)遍历数组一次，栈中元素最多入栈出栈各一次 Space O(n) 栈中元素最多n个
+        /*
+        先序遍历 root[xxx][yyy] 其中x肯定比root小，y肯定比root大，所以遍历到第一个y>root时，它所有后面的元素都要大于root
+        任何root大于y的情况都是不合理的。
+        问题转化成 a在root[xxx]里面,不断抬升a，验证[yyy]>a，一旦a>[yyy]里任何一个元素，即为false
+        可以构造一个单调递减的序列来储存root[xxx]，当y大于root[xxx]时，从栈中弹出元素，更新最小值来抬升。
+         */
+        Stack<Integer> stack=new Stack<>();
+        int min=Integer.MIN_VALUE;
+        /*
+                     5
+                2        6
+             1     3
+        */
+        for(int i=0;i<preorder.length;++i)
+        {
+            if(preorder[i]<min)
+                return false;
+            while(!stack.isEmpty()&&stack.peek()<preorder[i])
+            {
+                min=stack.pop();
+            }
+
+            stack.push(preorder[i]);
+        }
+        return true;
+    }
+}
