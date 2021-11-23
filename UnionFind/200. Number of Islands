@@ -1,0 +1,112 @@
+class Solution {
+    /*
+    Time O(M*N)MN为矩阵的面积  Space O
+    另有DFS BFS解法
+     */
+    int [][] direction=new int[][]{{1,0},{0,1},{-1,0},{0,-1}};
+    public int numIslands(char[][] grid) {
+        int rows= grid.length;
+        int cols= grid[0].length;
+        UnionFind uf=new UnionFind(grid);
+        for(int i=0;i< grid.length;++i)
+        {
+            for(int j=0;j<grid[0].length;++j)
+            {
+                if(grid[i][j]=='1')
+                {
+                    for(int[] d:direction)
+                    {
+                        int x = i + d[0];
+                        int y = j + d[1];
+                        if (x >= 0 && x < rows && y >= 0 && y < cols && grid[x][y] == '1') {
+                            int id1 = i*cols+j;
+                            int id2 = x*cols+y;
+                            uf.union(id1, id2);
+                        }
+                    }
+                }
+            }
+        }
+        return uf.count();
+    }
+    class UnionFind {
+        private int[] parent,size;
+        private int count;//Custom Code
+
+        public UnionFind(char[][] grid)
+        {
+            int rowLength= grid.length;
+            int colLength= grid[0].length;
+            int size=rowLength*colLength;
+            parent=new int[size];
+            this.size=new int[size];
+            count=0;
+            for(int i=0;i< rowLength;++i)
+            {
+                for(int j=0;j<colLength;++j)
+                {
+                    if(grid[i][j]=='1')
+                    {
+                        int id=i* colLength+j;
+                        parent[id]=id;
+                        ++count;
+                    }
+                }
+            }
+
+            for(int i=0;i<size;++i)
+            {
+                parent[i]=i;
+            }
+        }
+
+        public void union(int p,int q)
+        {
+            int rootP=find(p);
+            int rootQ=find(q);
+            if(rootP==rootQ)
+            {
+                return;//已经联合了
+            }
+            if(size[rootQ]>size[rootP])//如果rootQ的权重大于rootP，则将rootP当作子节点与rootQ连结
+            {
+                parent[rootP]=rootQ;
+            }
+            else {//rootP权重更大或相等
+                parent[rootQ]=rootP;
+                if(size[rootP]==size[rootQ])//若权重相等，则让rootP更大
+                {
+                    size[rootP]++;
+                }
+            }
+            count--;
+        }
+
+        public int find(int p)
+        {
+        /*
+        修改前
+        1 parent[parent[3]] 对应节点
+        |
+        2 parent[3] 对应节点
+        |
+        3 3
+
+        1 parent[3]   1 parent[2]
+        |             |
+        3             2
+         */
+
+            while(p!=parent[p])
+            {
+                parent[p]=parent[parent[p]];//path compression
+                p=parent[p];
+            }
+            return p;
+        }
+        //Retrieve your Custom Answer
+        public int count(){
+            return count;
+        }
+    }
+}
