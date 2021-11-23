@@ -1,0 +1,83 @@
+class Solution {
+    /*
+    Time O(n^2)原本为n^3 经过路径压缩后变为n^2 Space O(n)
+     */
+    public int findCircleNum(int[][] isConnected) {
+        UnionFind uf=new UnionFind(isConnected.length);
+        for(int i=0;i< isConnected.length-1;++i)
+        {
+            for(int j=i+1;j<isConnected.length;++j)
+            {
+                if(isConnected[i][j]==1)
+                {
+                    uf.union(i,j);
+                }
+            }
+        }
+        return uf.count();
+    }
+    class UnionFind {
+        private int[] parent,size;
+        private int count;//Custom Code
+
+        public UnionFind(int size)
+        {
+            parent=new int[size];
+            this.size=new int[size];
+            count=size;
+            for(int i=0;i<size;++i)
+            {
+                parent[i]=i;
+            }
+        }
+
+        public void union(int p,int q)
+        {
+            int rootP=find(p);
+            int rootQ=find(q);
+            if(rootP==rootQ)
+            {
+                return;//已经联合了
+            }
+            if(size[rootQ]>size[rootP])//如果rootQ的权重大于rootP，则将rootP当作子节点与rootQ连结
+            {
+                parent[rootP]=rootQ;
+            }
+            else {//rootP权重更大或相等
+                parent[rootQ]=rootP;
+                if(size[rootP]==size[rootQ])//若权重相等，则让rootP更大
+                {
+                    size[rootP]++;
+                }
+            }
+            count--;
+        }
+
+        public int find(int p)
+        {
+        /*
+        修改前
+        1 parent[parent[3]] 对应节点
+        |
+        2 parent[3] 对应节点
+        |
+        3 3
+
+        1 parent[3]   1 parent[2]
+        |             |
+        3             2
+         */
+
+            while(p!=parent[p])
+            {
+                parent[p]=parent[parent[p]];//path compression
+                p=parent[p];
+            }
+            return p;
+        }
+        //Retrieve your Custom Answer
+        public int count(){
+            return count;
+        }
+    }
+}
