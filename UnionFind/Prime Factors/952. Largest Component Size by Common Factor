@@ -1,0 +1,116 @@
+class Solution {
+    /*
+    Time
+    假设A数组长度为N,M是输入列表里的最大值
+    求最大值O(sqrtM)   求质数时候，从sqrtM的长度中使用eratosthenes算法得到质数数组
+    第二步 遍历A数组同时遍历质数数组
+    O(N*log2M*log*M)+O(N*sqrtM)
+    总共 O(sqrtM+log2 M+logM )*O(N)
+    第三步 union find
+    O(N*logM)
+
+    sum O(N(log2M*log*M+sqrtM))
+    Space O(M+N) Union M  原数组HashMap N
+     */
+    public int largestComponentSize(int[] A) {
+        int max=0;
+        for(int i:A)
+        {
+            max=Math.max(i,max);
+        }
+        int size=max+1;
+        int primes[]=eratosthenes((int) Math.sqrt(max));
+        UnionFind uf=new UnionFind(size);
+        for(int i=0;i<size;++i)
+        {
+            uf.parent[i]=i;
+        }
+        for(int i:A)
+        {
+            int x=i;
+            for(int j:primes)
+            {
+                if(i<j) break;
+                if(i%j==0)
+                {
+                    uf.union(i,j);
+
+                    while(x%j==0) x/=j;
+
+                    //uf.union(i,i/j);
+                }
+            }
+            if(x>1)
+            {
+                if(uf.find(x)!=uf.find(i))
+                {
+                    uf.union(x,i);
+                }
+            }
+        }
+        Map<Integer,Integer> counts=new HashMap<>();
+        int res=0;
+        for(int i:A)
+        {
+            int root=uf.find(i);
+            counts.put(root,counts.getOrDefault(root,0)+1);
+            res=Math.max(res,counts.get(root));
+        }
+        return res;
+    }
+    private int[] eratosthenes(int n) { // 给定一个上限n，求出这个上限以内所有的primes O(N*log(logN))
+        int[] q = new int[n + 1];
+        for (int i = 2; i <= (int)Math.sqrt(n); i++) {
+            if (q[i] == 0) {
+                int j = i * 2;
+                while (j < n) {
+                    q[j] = 1;
+                    j += i;
+                }
+            }
+        }
+        List<Integer> primes = new ArrayList<>();
+        for (int i = 2; i <= n; i++) {
+            if (q[i] == 0) primes.add(i);
+        }
+        int[] res = new int[primes.size()];
+        for (int i = 0; i < primes.size(); i++) res[i] = primes.get(i);
+        return res;
+    }
+    class UnionFind {
+        public int[] parent, size;
+
+        public UnionFind(int size) {
+            parent = new int[size];
+            this.size=new int[size];
+        }
+
+        public void union(int p, int q) {
+            int rootP = find(p);
+            int rootQ = find(q);
+            if (rootP == rootQ) {
+                return;//已经联合了
+            }
+            if(size[rootQ]>size[rootP])//如果rootQ的权重大于rootP，则将rootP当作子节点与rootQ连结
+            {
+                parent[rootP]=rootQ;
+            }
+            else {//rootP权重更大或相等
+                parent[rootQ]=rootP;
+                if(size[rootP]==size[rootQ])//若权重相等，则让rootP更大
+                {
+                    size[rootP]++;
+                }
+            }
+        }
+
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];//path compression
+                p = parent[p];
+            }
+            return p;
+        }
+
+    }
+}
