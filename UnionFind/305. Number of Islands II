@@ -1,0 +1,87 @@
+class Solution {
+    /*
+    Time O(M*N+L)MN为矩阵的面积,L为positions的长度  Space O(MN)
+    另有DFS BFS解法
+     */
+    int[][] direction = new int[][]{{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+
+    public List<Integer> numIslands2(int m, int n, int[][] positions) {
+        List<Integer> res = new ArrayList<>();
+        if (m <= 0 || n <= 0) {
+            return res;
+        }
+        UnionFind uf = new UnionFind(m * n);
+        for (int[] p : positions) {
+            int root = n * p[0] + p[1];
+            //Custom Code For duplicate
+            /*
+            3
+            3
+            [[0,0],[0,1],[1,2],[1,2]]
+            */
+            if(uf.parent[root]!=-1)
+            {
+                res.add(uf.count);
+                continue;
+            }
+            uf.parent[root] = root;
+
+            uf.count++;
+            for (int[] d : direction) {
+                int x = p[0] + d[0];
+                int y = p[1] + d[1];
+                int newRoot = x * n + y;
+                if (x < 0 || x >= m || y < 0 || y >= n || uf.parent[newRoot] == -1) continue;
+                int realRoot = uf.find(newRoot);
+                uf.union(root, realRoot);
+            }
+            res.add(uf.count);
+        }
+        return res;
+    }
+
+    class UnionFind {
+        public int[] parent, size;
+        public int count;//Custom Code
+
+        public UnionFind(int size) {
+            parent = new int[size];
+            this.size=new int[size];
+            count = 0;
+            Arrays.fill(parent, -1);
+        }
+
+        public void union(int p, int q) {
+            int rootP = find(p);
+            int rootQ = find(q);
+            if (rootP == rootQ) {
+                return;//已经联合了
+            }
+            if(size[rootQ]>size[rootP])//如果rootQ的权重大于rootP，则将rootP当作子节点与rootQ连结
+            {
+                parent[rootP]=rootQ;
+            }
+            else {//rootP权重更大或相等
+                parent[rootQ]=rootP;
+                if(size[rootP]==size[rootQ])//若权重相等，则让rootP更大
+                {
+                    size[rootP]++;
+                }
+            }
+            count--;
+        }
+
+        public int find(int p) {
+            while (p != parent[p]) {
+                parent[p] = parent[parent[p]];//path compression
+                p = parent[p];
+            }
+            return p;
+        }
+
+        //Retrieve your Custom Answer
+        public int count() {
+            return count;
+        }
+    }
+}
