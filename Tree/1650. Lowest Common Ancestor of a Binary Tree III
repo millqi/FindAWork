@@ -23,4 +23,44 @@ public class Solution {
         }
         return a;
     }
+    //先求两个节点的高度，求出它们的间隔距离，将更高的一个节点先往上移动该距离，然后两个节点会处在同一层，当他们不是同一节点时，往上一层移动，最后一定会相同。
+    public Node lowestCommonAncestor(Node p, Node q) {
+        // Time Complexity: O(log(N))
+        // Space Complexity: O(1)
+        
+        if (p == q) {
+            return p;
+        }
+        
+        int heightP = heightOfNode(p);
+        int heightQ = heightOfNode(q);
+        
+        Node deeperNode = heightP > heightQ ? p : q;
+        Node shallowerNode = heightP > heightQ ? q : p;
+        
+        int gap = Math.abs(heightP - heightQ);
+        while (gap > 0) {
+            deeperNode = deeperNode.parent;
+            gap--;
+        }
+        
+        if (deeperNode == shallowerNode) {
+            return deeperNode;
+        }
+        
+        while (deeperNode != shallowerNode) {
+            deeperNode = deeperNode.parent;
+            shallowerNode = shallowerNode.parent;
+        }
+        return deeperNode;
+    }
+    
+    private int heightOfNode(Node node) {
+        int height = 0;
+        while (node != null) {
+            node = node.parent;
+            height++;
+        }
+        return height;
+    }
 }
