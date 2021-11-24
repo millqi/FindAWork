@@ -1,0 +1,64 @@
+class Solution {
+    /*
+    Time O(N^2) Space O(N)
+    DP基本型2
+     */
+    public int lengthOfLIS(int[] nums) {
+        int dp[]=new int[nums.length];
+        Arrays.fill(dp,1);
+        for(int i=1;i<nums.length;++i)
+        {
+            for(int j=0;j<i;++j)
+            {
+                if(nums[j]<nums[i])
+                {
+                    dp[i]=Math.max(dp[i],dp[j]+1);
+                }
+            }
+        }
+        int max=0;
+        for(int i:dp)
+        {
+            max=Math.max(i,max);
+        }
+        return max;
+    }
+    /*
+    Time O(NlogN) Space O(N)
+    耐心排序（Patience Sort）将数组的元素分类成很多堆再串接回数组的一种排序算法
+    使用tails数组记录 tails[i] 记录长度为 i+1的所有子序列中最小的尾巴，例子如下
+    nums = [4,5,6,3]
+    len = 1   :      [4], [5], [6], [3]   => tails[0] = 4 => tails[0] = 3 因为 3小于数组中所有元素，所以它只能作为长度为1的子序列最小的尾巴
+    len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+    len = 3   :      [4, 5, 6]            => tails[2] = 6
+
+    (1) if x is larger than all tails, append it, increase the size by 1
+    在下面的函数中，体现在frt会在数组的最末尾处，此时可以通过frt==tails.size来判断当前数是否大于所有序列的尾巴
+    (2) if tails[i-1] < x <= tails[i], update tails[i]
+    如果没有大于tails中所有元素，则需要更新对应的尾巴
+     */
+    public int lengthOfLIS(int[] nums) {
+        int tails[]=new int[nums.length];
+        int size=0;
+        for(int n:nums){
+            int frt=0,end=size;
+            while(frt<end)
+            {
+                int mid=frt+(end-frt)/2;
+                if(tails[mid]<n)
+                {
+                    frt=mid+1;
+                }
+                else {
+                    end=mid;
+                }
+            }
+            tails[frt]=n;
+            if(frt==size)
+            {
+                ++size;
+            }
+        }
+        return size;
+    }
+}
