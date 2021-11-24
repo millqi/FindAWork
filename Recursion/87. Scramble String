@@ -1,0 +1,73 @@
+class Solution {
+    //Time O(5^n) String length as N
+    /*
+For string of size n take time to be T(n) for it
+We are starting from i=1 and going till n-1
+This line of code isScramble(s1.substr(0,i), s2.substr(0,i)) && isScramble(s1.substr(i), s2.substr(i)))
+is T(i) + T(n-i)
+and this line of code just below isScramble(s1.substr(0,i), s2.substr(len-i)) && isScramble(s1.substr(i), s2.substr(0,len-i))
+is again T(i) + T(n-i)
+
+So basically for T(n) we have:
+T(n) = for i in 1 to n-1 : +2*(T(i) + T(n-i))
+i.e.
+T(n) = 2*(T(1) + T(n-1) + T(2) + T(n-2) + ... + T(n-1) + T(1)) ,
+now we have two equal sequences T(1) to T(n-1) from left to right and T(n-1) to T(1) from right to left. So above equation can be written as
+T(n) = 2 * 2(T(1) + T(2) + ...+ T(n-2) + T(n-1))
+T(n) = 4 * (T(1) + T(2) + ...+ T(n-2) ) + 4 * T(n-1)
+
+if we substitute n-1 in place of n above we get T(n-1) = 4 * (T(1) + T(2) + ...+ T(n-2) ) , using this in the above equation we get
+T(n) = T(n-1) + 4 * T(n-1)
+T(n) = 5 * T(n-1)
+
+If we open this we get
+T(n) = 5 * 5 * T(n-2) = 5 * 5 * 5 * T(n-3) = 5 * 5 * ... * 5 (n times)
+so T(n) = O(5^n)
+
+Space O(5^n) 总共有这么多个序列存入hashmap中
+     */
+    Map<String,Boolean> isValid=new HashMap<>();
+    public boolean isScramble(String s1, String s2) {
+        //Check if equals
+        if(s1.equals(s2)) return true;
+        //Serialize s1 and s2 to a key
+        StringBuilder sb=new StringBuilder();
+        sb.append(s1).append(s2);
+        String key=sb.toString();
+        //Return if the key is already seen
+        if(isValid.containsKey(key))
+        {
+            return isValid.get(key);
+        }
+
+        //Check the character is same or not
+        int[] letters=new int[26];
+        for(int i=0;i<s1.length();++i)
+        {
+            ++letters[s1.charAt(i)-'a'];
+            --letters[s2.charAt(i)-'a'];
+        }
+        for(int i=0;i<letters.length;++i)
+        {
+            if(letters[i]!=0){
+                isValid.put(key,false);
+                return false;
+            }
+        }
+        for(int i=1;i<s1.length();++i)
+        {
+            if(isScramble(s1.substring(0,i),s2.substring(0,i))&&isScramble(s1.substring(i),s2.substring(i)))
+            {
+                isValid.put(key,true);
+                return true;
+            }
+            if(isScramble(s1.substring(0,i),s2.substring(s1.length()-i))&&isScramble(s1.substring(i),s2.substring(0,s1.length()-i)))
+            {
+                isValid.put(key,true);
+                return true;
+            }
+        }
+        isValid.put(key,false);
+        return false;
+    }
+}
