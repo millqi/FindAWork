@@ -25,7 +25,7 @@ public class Solution {
     }
     //先求两个节点的高度，求出它们的间隔距离，将更高的一个节点先往上移动该距离，然后两个节点会处在同一层，当他们不是同一节点时，往上一层移动，最后一定会相同。
     public Node lowestCommonAncestor(Node p, Node q) {
-        // Time Complexity: O(log(N))
+        // Time Complexity: O(h) h is the height of the deep node
         // Space Complexity: O(1)
         
         if (p == q) {
