@@ -1,0 +1,58 @@
+import java.util.*;
+
+class Solution {
+    //Time O(n) n是节点个数 Space O(n) n是节点个数
+    public int[] findRedundantConnection(int[][] edges) {
+        int size=edges.length;
+        UF uf=new UF(size+1);
+        for(int[] edge:edges)
+        {
+            int p1=edge[0];
+            int p2=edge[1];
+            if(uf.find(p1)== uf.find(p2)) return edge;
+            uf.union(uf.find(p1), uf.find(p2));
+        }
+        return new int[2];
+    }
+    class UF {
+        int[] parents;
+        int[] ranks;
+        public UF(int size)
+        {
+            parents=new int[size];
+            ranks=new int[size];
+            for(int i=0;i<size;++i)
+            {
+                parents[i]=i;
+            }
+        }
+        public int find(int index)
+        {
+            while(index!=parents[index])
+            {
+                parents[index]=parents[parents[index]];
+                index=parents[index];
+            }
+            return index;
+        }
+        public void union(int i,int j)
+        {
+            int p1=find(i);
+            int p2=find(j);
+            if(p1==p2)
+                return;
+            if(ranks[p1]<ranks[p2])
+            {
+                parents[p1]=p2;
+            }
+            else
+            {
+                parents[p2]=p1;
+                if(ranks[p1]==ranks[p2])
+                {
+                    ranks[p1]++;
+                }
+            }
+        }
+    }
+}
