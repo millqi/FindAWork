@@ -1,0 +1,22 @@
+class Solution {
+    public void rotate(int[][] matrix) {
+        //Time O(n) n是矩阵元素个数 Space O(1)
+        //从外向内进行转向
+        int matrixLength= matrix.length;
+        for(int len=matrixLength;len>1;len-=2)
+        {
+            //len是当前正方形的长度
+            int low=(matrixLength-len)/2;//当前最低的索引
+            int high=low+len-1;//当前最高的索引=当前最低+当前正方形长度-1（0-index）
+            for(int i=0;i<len-1;++i){
+                int temp=matrix[high-i][low];
+                //右下移到左下，右下应当保持y轴为最低，x轴慢慢往左移动，左边应该要保持x轴为0，y轴持续向上
+                matrix[high-i][low]=matrix[high][high-i];
+                matrix[high][high-i]=matrix[low+i][high];
+                matrix[low+i][high]=matrix[low][low+i];
+                matrix[low][low+i]=temp;
+            }
+        }
+        return;
+    }
+}
