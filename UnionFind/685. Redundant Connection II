@@ -1,0 +1,91 @@
+class Solution {
+    //Time O(nlog*n) log*n是unionfind的时间复杂度，近似于1 n是节点个数 Space O(n) n是节点个数
+    public int[] findRedundantDirectedConnection(int[][] edges) {
+        int size=edges.length;
+        UF uf=new UF(size+1);
+        int candidate1[]=new int[]{-1,-1};
+        int candidate2[]=new int[]{-1,-1};
+        for(int[] edge:edges)
+        {
+            if(uf.parents[edge[1]]==0)
+            {
+                uf.parents[edge[1]]=edge[0];
+            }
+            else {
+                /*
+                candidate1 是先被遍历到的边
+                candidate2 是后被遍历到的边
+                 */
+                candidate1=new int[]{uf.parents[edge[1]],edge[1]};
+                candidate2=new int[]{edge[0],edge[1]};
+                //看去掉这一条边(candidate2)，unionfind看还有没有环
+                edge[1]=0;
+            }
+        }
+        uf.resetParents();
+        for(int i=0;i<edges.length;++i){
+            if(edges[i][1]==0)
+            {
+                continue;
+            }
+            int child = edges[i][1],father=edges[i][0];
+            //仍旧存在环
+            if(uf.find(father)==child)
+            {
+                //存在连接根节点的边，当树里面所有节点入度都为1，则第一次循环时不会修改candidate1和2，这种情况直接返回该边就可以
+                if(candidate1[0]==-1)
+                {
+                    return edges[i];
+                }
+                //不存在可以循环的环，但没有连接到根节点
+                return candidate1;
+            }
+            uf.parents[child]=father;
+        }
+        //不存在环，则返回最后的多余边
+        return candidate2;
+    }
+    class UF {
+        public int[] parents;
+        public int[] ranks;
+        public UF(int size)
+        {
+            parents=new int[size];
+            ranks=new int[size];
+        }
+        public void resetParents(){
+            for(int i=0;i<parents.length;++i)
+            {
+                parents[i]=i;
+            }
+        }
+        public int find(int index)
+        {
+            while(index!=parents[index])
+            {
+                parents[index]=parents[parents[index]];
+                index=parents[index];
+            }
+            return index;
+        }
+        public void union(int i,int j)
+        {
+            int p1=find(i);
+            int p2=find(j);
+            if(p1==p2)
+                return;
+            if(ranks[p1]<ranks[p2])
+            {
+                parents[p1]=p2;
+            }
+            else
+            {
+                parents[p2]=p1;
+                if(ranks[p1]==ranks[p2])
+                {
+                    ranks[p1]++;
+                }
+            }
+        }
+    }
+}
