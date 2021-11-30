@@ -1,0 +1,146 @@
+import java.util.*;
+
+class Solution {
+    /*
+    length of accounts : N
+    maximum numbers of emails for an account : M
+    Time O(NMlogNM) space O(NM) 有union数组的2n，有2个hashmap和一个list长度都是最长为NM
+    logNM是排序产生的，NM是遍历所有account产生的，其中hashmap 操作为O(1),union操作经过路径压缩，O(log*n)
+     */
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        int size=accounts.size();
+        UF unions=new UF(size);
+        HashMap<String,Integer> emailToId=new HashMap<>();
+        //将accounts的每个sublist的email都标记为自身
+        /*
+        0 email1 email2 email3   都标记为0
+        1 email4 email5 email6   都标记为1
+        2 email7(2->1) email8(2->1) email6(1)   都标记为2，当遇到最后有记录的email6时，将它联合
+        */
+        for(int i=0;i<size;++i)
+        {
+            List<String> sublist=accounts.get(i);
+            for(int j=1;j<sublist.size();++j)
+            {
+                String email=sublist.get(j);
+                if(!emailToId.containsKey(email))
+                {
+                    emailToId.put(email,i);
+                }
+                else {
+                    unions.union(i,emailToId.get(email));//union 2 和 1 -->1
+                }
+            }
+        }
+        Map<Integer,List<String>> idToEmails=new HashMap<>();
+        //将每个email关联的根id取得，将该email放入该根对应的列表里
+        for(String key:emailToId.keySet())
+        {
+            /*
+            0 email1 email2 email3
+            1 email4 email5 email6
+            2 email7 email8 email6
+            扫描到 email7时，因为已经union过，所以find(email7)会得到1，直接在1中加入
+             */
+            int root= unions.find(emailToId.get(key));
+            idToEmails.putIfAbsent(root,new ArrayList<>());
+            idToEmails.get(root).add(key);
+        }
+        List<List<String>> res=new ArrayList<>();
+        for(Integer id:idToEmails.keySet()){
+            List<String> emails=idToEmails.get(id);
+            Collections.sort(emails);
+            emails.add(0,accounts.get(id).get(0));
+            res.add(emails);
+        }
+        return res;
+    }
+
+    class UF {
+        int[] parents;
+        int[] ranks;
+        public UF(int size)
+        {
+            parents=new int[size];
+            ranks=new int[size];
+            for(int i=0;i<size;++i)
+            {
+                parents[i]=i;
+            }
+        }
+        public int find(int index)
+        {
+            while(index!=parents[index])
+            {
+                parents[index]=parents[parents[index]];
+                index=parents[index];
+            }
+            return index;
+        }
+        public void union(int i,int j)
+        {
+            int p1=find(i);
+            int p2=find(j);
+            if(p1==p2)
+                return;
+            if(ranks[p1]<ranks[p2])
+            {
+                parents[p1]=p2;
+            }
+            else
+            {
+                parents[p2]=p1;
+                if(ranks[p1]==ranks[p2])
+                {
+                    ranks[p1]++;
+                }
+            }
+        }
+    }
+
+    /*
+    DFS + Graph Solution
+     */
+    public List<List<String>> accountsMerge(List<List<String>> accounts) {
+        Map<String, Set<String>> graph = new HashMap<>();  //<email node, neighbor nodes>
+        Map<String, String> name = new HashMap<>();        //<email, username>
+        // Build the graph;
+        for (List<String> account : accounts) {
+            String userName = account.get(0);
+            for (int i = 1; i < account.size(); i++) {
+                if (!graph.containsKey(account.get(i))) {
+                    graph.put(account.get(i), new HashSet<>());
+                }
+                name.put(account.get(i), userName);
+
+                if (i == 1) continue;
+                graph.get(account.get(i)).add(account.get(i - 1));
+                graph.get(account.get(i - 1)).add(account.get(i));
+            }
+        }
+
+        Set<String> visited = new HashSet<>();
+        List<List<String>> res = new LinkedList<>();
+        // DFS search the graph;
+        for (String email : name.keySet()) {
+            List<String> list = new LinkedList<>();
+            if (visited.add(email)) {
+                dfs(graph, email, visited, list);
+                Collections.sort(list);
+                list.add(0, name.get(email));
+                res.add(list);
+            }
+        }
+
+        return res;
+    }
+
+    public void dfs(Map<String, Set<String>> graph, String email, Set<String> visited, List<String> list) {
+        list.add(email);
+        for (String next : graph.get(email)) {
+            if (visited.add(next)) {
+                dfs(graph, next, visited, list);
+            }
+        }
+    }
+}
