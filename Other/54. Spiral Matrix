@@ -1,0 +1,37 @@
+import java.util.*;
+
+class Solution {
+    //Time O(n) n为节点个数 Space O(1)  不断移动四边边界，进行移动的模拟
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res=new ArrayList<>();
+        int rowDown=0,colLeft=0,rowTop=matrix.length-1,colRight=matrix[0].length-1;
+        while(rowTop>=rowDown&&colLeft<=colRight)
+        {
+            for(int i=colLeft;i<=colRight;++i){
+                res.add(matrix[rowDown][i]);
+            }
+            ++rowDown;
+            for(int i=rowDown;i<=rowTop;++i)
+            {
+                res.add(matrix[i][colRight]);
+            }
+            --colRight;
+            if(rowDown<=rowTop)
+            {
+                for(int i=colRight;i>=colLeft;--i){
+                    res.add(matrix[rowTop][i]);
+                }
+            }
+            --rowTop;
+            if(colLeft<=colRight)
+            {
+                for(int i=rowTop;i>=rowDown;--i)
+                {
+                    res.add(matrix[i][colLeft]);
+                }
+            }
+            ++colLeft;
+        }
+        return res;
+    }
+}
