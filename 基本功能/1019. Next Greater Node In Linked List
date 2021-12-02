@@ -1,0 +1,31 @@
+class Solution {
+    class SnapshotArray {
+        /*
+        version数组的每一个元素是一个treemap，使用treemap记录该位置的元素的状态，treemap<version,value>
+         */
+        int id;
+        TreeMap<Integer,Integer> version[];
+        //Time O(n) Space O(n)
+        public SnapshotArray(int length) {
+            version=new TreeMap[length];
+            for(int i=0;i<length;++i){
+                version[i]=new TreeMap<>();
+                version[i].put(0,0);
+            }
+            id=0;
+        }
+        //Time O(logN) 因为要排序
+        public void set(int index, int val) {
+            version[index].put(id,val);
+        }
+        //TIme O(1)
+        public int snap() {
+            return id++;
+        }
+        //Time O(logN) 二分查找
+        public int get(int index, int snap_id) {
+            return version[index].floorEntry(snap_id).getValue();
+        }
+    }
+
+}
