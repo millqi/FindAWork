@@ -1,0 +1,58 @@
+class Solution {
+    //Time O(NK) Space O(NK) n是方块的个数，k是破墙次数，对于每个方块它最多可以被访问k次
+    int[][] dirs = new int[][]{{0,1},{0,-1},{1,0},{-1,0}};
+
+    public int shortestPath(int[][] grid, int k) {
+        int row = grid.length;
+        int col = grid[0].length;
+
+        Queue<Status> q = new LinkedList<>();
+        q.add(new Status(0,0,k));
+        //该矩阵存储到每一个点的临时最优解
+        int[][] visited = new int[row][col];
+
+        for (int i = 0; i < row; i++) Arrays.fill(visited[i], -1);
+        visited[0][0] = k;
+
+        int res = 0;
+        while(!q.isEmpty())
+        {
+            for(int i=0;i<q.size();++i)
+            {
+                Status cur=q.poll();
+                //当破除砖块的机会小于0，证明该状态是不可达的，直接继续循环
+                if(cur.chances<0) continue;
+                if(cur.x==row-1&&cur.y==col-1) return res;
+                for(int [] dir:dirs){
+                    int nextX= cur.x+dir[0];
+                    int nextY= cur.y+dir[1];
+                    if(nextX>=0&&nextX<row&&nextY>=0&&nextY<col)
+                    {
+                        //计算还有多少次机会用于破除砖块
+                        int changesLeft= grid[nextX][nextY]==1? cur.chances-1 : cur.chances;
+                        //若现在状态比先前的状态有更多破除砖块的机会，则需要更新到矩阵上。
+                        //先前的状态使用了破除砖块，走到了更前面，先前的不会影响后面的状态。
+                        //后来的状态使用破除砖块的次数少，会相对走的慢，相对后面的路会有更多的破除砖块机会，存在走的快的可能性
+                        //此判断用于剪枝，如果来到当前方块，使用的破除砖块次数比先前状态还要多，则后续只可能使用到大于等于先前状态的步数
+                        if(changesLeft>visited[nextX][nextY]){
+                            visited[nextX][nextY]=changesLeft;
+                            q.add(new Status(nextX,nextY,changesLeft));
+                        }
+                    }
+                }
+            }
+            ++res;
+        }
+        return -1;
+    }
+    class Status {
+        int x;
+        int y;
+        int chances;
+        public Status(int a, int b, int k) {
+            this.x = a;
+            this.y = b;
+            this.chances = k;
+        }
+    }
+}
