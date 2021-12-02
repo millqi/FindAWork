@@ -1,0 +1,41 @@
+class Solution {
+    //Time O(n) Space O(n) n是方块格数
+    private final int[][] dirs=new int[][]{{-1,0},{0,1},{1,0},{0,-1}};
+    public int getFood(char[][] grid) {
+        int row=grid.length,col=grid[0].length;
+        Queue<int[]> positions=new LinkedList<>();
+        boolean visited[][]=new boolean[row][col];
+        int res=0;
+        for(int i=0;i<grid.length;++i)
+        {
+            for(int j=0;j<grid[0].length;++j){
+                if(grid[i][j]=='*')
+                {
+                    positions.add(new int[]{i,j});
+                    visited[i][j]=true;
+                    break;
+                }
+            }
+        }
+        while(!positions.isEmpty()){
+            //不可以使用for(int i=0;i< positions.size();++i) 每次poll之后会减少queue的size，导致循环次数会变少
+            int size=positions.size();
+            for(int i=0;i< size;++i)
+            {
+                int[] cur=positions.poll();
+                if(grid[cur[0]][cur[1]]=='#') return res;
+                for(int[] dir:dirs){
+                    int nextX=cur[0]+dir[0];
+                    int nextY=cur[1]+dir[1];
+                    if(nextX>=0&&nextX<row&&nextY>=0&&nextY<col&&!visited[nextX][nextY]&&grid[nextX][nextY]!='X')
+                    {
+                        visited[nextX][nextY]=true;
+                        positions.add(new int[]{nextX,nextY});
+                    }
+                }
+            }
+            ++res;
+        }
+        return -1;
+    }
+}
