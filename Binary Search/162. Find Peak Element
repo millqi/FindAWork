@@ -38,6 +38,7 @@ public class Solution {
                 end=mid;
             }
         }
+        //当原数组的后半部分是递减的，//2 5 4 3 0 end会一直往前，而且frt会小于end，实际上end才是peak
         return (frt==n-1||nums[frt]>nums[frt+1])? frt:end;
     }
 }
