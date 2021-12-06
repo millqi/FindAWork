@@ -1,0 +1,39 @@
+class Solution {
+    //先储存数字，遇到符号时候则开启计算临时记录的number
+    public int calculate(String s) {
+        Stack<Integer> stack=new Stack<>();
+        int res=0;
+        int number=0;
+        int sign=1;
+        for(int i=0;i<s.length();++i){
+            char c=s.charAt(i);
+            if(Character.isDigit(c)){
+                number=10*number+(c-'0');
+            }
+            else if(s.charAt(i)=='+'){
+                res+=sign*number;
+                sign=1;
+                number=0;
+            }
+            else if(s.charAt(i)=='-'){
+                res+=sign*number;
+                sign=-1;
+                number=0;
+            }
+            else if(s.charAt(i)=='('){
+                stack.push(res);
+                stack.push(sign);
+                sign=1;
+                res=0;
+            }
+            else if(s.charAt(i)==')'){
+                res+=sign*number;
+                number=0;
+                res*=stack.pop();
+                res+=stack.pop();
+            }
+        }
+        if(number!=0) res+=sign*number;
+        return res;
+    }
+}
