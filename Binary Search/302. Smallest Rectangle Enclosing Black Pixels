@@ -1,0 +1,94 @@
+class Solution {
+    //Time O(4NlgN) Space O(1)
+    public int minArea(char[][] image, int x, int y) {
+        int left=left(image,x,y);
+        int right=right(image,x,y);
+        int top=top(image,x,y);
+        int down=down(image,x,y);
+        return (down-top+1)*(right-left+1);
+    }
+    public int left(char[][] image, int x, int y){
+        int frt=0,end=y;
+        boolean found=false;
+        while(frt<end){
+            int mid=frt+(end-frt)/2;
+            found=false;
+            for(int i=0;i< image.length;++i){
+                if(image[i][mid]=='1'){
+                    found=true;
+                    break;
+                }
+            }
+            if(found){
+                end=mid;
+            }
+            else {
+                frt=mid+1;
+            }
+        }
+        return frt;
+    }
+    public int right(char[][] image, int x, int y){
+        int frt=y,end=image[0].length-1;
+        boolean found=false;
+        while(frt<end){
+            int mid=frt+(end-frt+1)/2;
+            found=false;
+            for(int i=0;i< image.length;++i){
+                if(image[i][mid]=='1'){
+                    found=true;
+                    break;
+                }
+            }
+            if(found){
+                frt=mid;
+            }
+            else {
+                end=mid-1;
+            }
+        }
+        return end;
+    }
+    public int top(char[][] image, int x, int y){
+        int frt=0,end=x;
+        boolean found=false;
+        while(frt<end){
+            int mid=frt+(end-frt)/2;
+            found=false;
+            for(int i=0;i< image[0].length;++i){
+                if(image[mid][i]=='1'){
+                    found=true;
+                    break;
+                }
+            }
+            if(found){
+                end=mid;
+            }
+            else {
+                frt=mid+1;
+            }
+        }
+        return frt;
+    }
+    public int down(char[][] image, int x, int y){
+        int frt=x,end=image.length-1;
+        boolean found=false;
+        while(frt<end){
+            int mid=frt+(end-frt+1)/2;
+            found=false;
+            for(int i=0;i< image[0].length;++i){
+                if(image[mid][i]=='1'){
+                    found=true;
+                    break;
+                }
+            }
+            if(found){
+                frt=mid;
+            }
+            else {
+                end=mid-1;
+            }
+        }
+        return end;
+    }
+}
