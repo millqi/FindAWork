@@ -15,6 +15,7 @@ class Solution {
             }
             int mid=frt+(end-frt)/2;
             //当中间值大于前面的值，证明frt是在原数组的后半部分
+            //[2,1] 如果不使用=，会造成frt留在2，若为[1,2]，在前面就会返回
             if(nums[mid]>=nums[0])
             {
                 frt=mid+1;
