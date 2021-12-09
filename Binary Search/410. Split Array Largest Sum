@@ -1,0 +1,46 @@
+class Solution {
+    /*
+    左边界是数组的最大值，右边界是数组的sum
+    每次取中间值进行计算，mid代表分割数组后每一个数组sum的最大值
+    在isValid函数中，count记录当前有几个数组，total记录当前数组sum的大小
+    当total大于mid时，应该分割一次数组，并且从零开始计算（total初始化为当前数字），由于分割了一次数组，++count
+    当count超过m时，则应当返回false，证明现在的mid数太小，分割数组不够用（前面的数组可以维持小于mid，后面的不行）
+    当count小于等于m时，则应当返回true，证明现在的mid数太大，可以适当减小mid逼近题目答案（mid取可能的最小值）
+
+    Time O(Nlog(sum of array)) Space O(1)
+     */
+    public int splitArray(int[] nums, int m) {
+        long frt=nums[0],end=0;
+        for(int i=0;i<nums.length;++i){
+            frt=Math.max(frt,nums[i]);
+            end+=nums[i];
+        }
+        if(m==1) return (int) end;
+
+        while(frt<=end){
+            long mid=frt+(end-frt)/2;
+            if(isValid(mid,nums,m)){
+                end=mid-1;
+            }
+            else {
+                frt=mid+1;
+            }
+        }
+        return (int) frt;
+    }
+    public boolean isValid(long target,int nums[],int m){
+        int count=1;
+        long total=0;
+        for(int num:nums){
+            total+=num;
+            if(total>target){
+                total=num;
+                ++count;
+                if(count>m){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+}
